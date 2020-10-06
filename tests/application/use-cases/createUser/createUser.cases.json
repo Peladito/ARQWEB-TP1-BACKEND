@@ -1,0 +1,38 @@
+{
+    "validTrue":[
+        {   
+            "description":"Happy path",
+            "dependencies":{
+                "userExists":"validFalse",
+                "persistUser":"validTrue"
+            }
+            
+        }
+    ],
+    "errored":[
+        {   
+            "description":"User exists",
+            "dependencies":{
+                "userExists":"validTrue",
+                "persistUser":"validTrue"
+            },
+            "throws":"UserAlreadyExistsError"
+        },
+        {   
+            "description":"Error when userExists throws",
+            "dependencies":{
+                "userExists":"errored",
+                "persistUser":"validTrue"
+            },
+            "throws":"CreateUserError"
+        },
+        {   
+            "description":"Error when persistUser throws",
+            "dependencies":{
+                "userExists":"validFalse",
+                "persistUser":"errored"
+            },
+            "throws":"CreateUserError"
+        }
+    ]
+}

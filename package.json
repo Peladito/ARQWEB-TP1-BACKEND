@@ -1,0 +1,31 @@
+{
+  "name": "yoestuveahi",
+  "version": "1.0.0",
+  "description": "Tp arqweb uba",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/a-lavia/ARQWEB-TP1-BACKEND.git"
+  },
+  "keywords": [
+    "tp",
+    "uba",
+    "arqweb",
+    "nodejs"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/a-lavia/ARQWEB-TP1-BACKEND/issues"
+  },
+  "homepage": "https://github.com/a-lavia/ARQWEB-TP1-BACKEND#readme",
+  "devDependencies": {
+    "jest": "^26.5.2"
+  }
+}

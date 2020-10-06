@@ -1,0 +1,348 @@
+openapi: 3.0.0
+info:
+  description: "API #YoEstuveAhi"
+  version: "1.0.0"
+  title: "#YoEstuveAhi"
+
+
+
+paths:
+  /user:
+    post:
+      tags:
+      - "user"
+      summary: "Crea usuario"
+      description: ""
+      operationId: "createUser"
+      requestBody:
+        required: true
+        content:
+          application/form-data:
+            schema:
+              $ref: '#/components/schemas/NewUser'
+
+      responses:
+        default:
+          description: "successful operation"
+    get:
+      tags:
+      - "user"
+      summary: "Recupera perfil de usuario"
+      description: ""
+      operationId: "getUSer"
+      security:
+        - basicAuth: [] 
+      responses:
+        default:
+          description: 'Perfil de usuario'
+          content:
+            application/form-data:
+              schema:
+                $ref: '#/components/schemas/User'
+        "404":
+          description: "Usuario no encontrado"
+
+  /user/checkin/{location_id}:
+    post:
+      tags:
+      - "check"
+      summary: "Checkin a locacion"
+      description: "Registra la entrada de un usuario a una locacion"
+      security:
+        - basicAuth: [] 
+      parameters:
+        - in: path
+          name: location_id
+          required: true
+          schema:
+              type: string
+          description: Lower range date value
+      responses:
+        "200":
+          description: "successful operation"
+
+        "400":
+          description: "Usuario invalido"
+        "x-400":
+          description: "Locacion invalida"
+        "409":
+          description: "Usuario no puede hacer checkin"
+          
+  /user/checkout:
+    post:
+      tags:
+      - "check"
+      summary: "Hace checkout del usuario del ultimo lugar donde hizo checkin"
+      description: ""
+      security:
+        - basicAuth: [] 
+      responses:
+        default:
+          description: "successful operation"
+        "400":
+          description: "Usuario invalido"
+        "409":
+          description: "Usuario no tiene hecho checkin"
+  
+  /user/diagnostic/{date}:
+    post:
+      tags:
+      - "diagnostic"
+      summary: "Declara al usuario como infectado"
+      description: ""
+      security:
+        - basicAuth: [] 
+      parameters:
+        - in: path
+          name: date
+          required: true
+          schema:
+              type: string
+          description: Fecha de infeccion
+      responses:
+        default:
+          description: "successful operation"
+        "403":
+          description: "Usuario no autorizado"
+
+    delete:
+      tags:
+      - "diagnostic"
+      summary: "Le da el alta clinica a un usuario"
+      description: ""
+      parameters:
+        - in: path
+          name: date
+          required: true
+          schema:
+              type: string
+          description: Fecha de alta
+      security:
+        - basicAuth: [] 
+      responses:
+        default:
+          description: "successful operation"
+        "403":
+          description: "Usuario invalido"
+        "409":
+          description: "Usuario no es posible infectado ni esta infectado"
+
+          
+  /location:
+    post:
+      tags:
+      - "location"
+      summary: "Crea una locacion"
+      description: "Da de alta una locacion"
+      security:
+        - basicAuth: [] 
+      requestBody:
+        required: true
+        content:
+          application/form-data:
+            schema:
+              $ref: '#/components/schemas/NewLocation'
+      responses:
+        default:
+          description: "successful operation"
+        "403":
+          description: "Usuario invalido"
+        "409":
+          description: "Locacion ya existente"
+    get:
+      tags:
+      - "location"
+      summary: "Devuelve un listado de las locaciones del usuario / del sistema si el usuario es el admin"
+      description: ""
+      security:
+        - basicAuth: [] 
+      responses:
+        default:
+          description: "successful operation"
+          content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/LocationList'   
+        "403":
+          description: "Usuario invalido"
+
+  /location/{location_id}:
+    put:
+      tags:
+      - "location"
+      summary: "Edita una locacion"
+      description: ""
+      security:
+        - basicAuth: [] 
+      parameters:
+        - in: path
+          name: location_id
+          required: true
+          schema:
+              type: string
+          description: Lower range date value
+      requestBody:
+        required: true
+        content:
+          application/form-data:
+            schema:
+              $ref: '#/components/schemas/NewLocation'
+      responses:
+        default:
+          description: "ok"
+  
+        "403":
+          description: "Usuario invalido"
+        "404":
+          description: "Locacion inexistente"
+    get:
+      tags:
+      - "location"
+      summary: "Devuelve una locacion en su estado actual"
+      description: ""
+      security:
+        - basicAuth: [] 
+      parameters:
+        - in: path
+          name: location_id
+          required: true
+          schema:
+              type: string
+          description: Lower range date value
+      responses:
+        default:
+          description: "successful operation"
+          content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/LocationList'   
+        "403":
+          description: "Usuario invalido"
+        "404":
+          description: "Locacion inexistente"
+  /statistics:
+    get:
+      tags:
+      - "admin"
+      summary: "Devuelve las estadisticas del sistema"
+      description: ""
+      security:
+        - basicAuth: [] 
+      responses:
+        default:
+          description: "successful operation"
+          content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Statistics'  
+  
+        "403":
+          description: "Usuario invalido"
+
+  /history:
+    get:
+      tags:
+      - "admin"
+      summary: "Devuelve los contagios por fecha"
+      description: ""
+      security:
+        - basicAuth: [] 
+      responses:
+        default:
+          description: "successful operation"
+          content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/History'  
+  
+        "403":
+          description: "Usuario invalido"
+
+
+
+components:
+  securitySchemes:
+    basicAuth:     # <-- arbitrary name for the security scheme
+      type: http
+      scheme: basic
+      
+  schemas: 
+    NewUser:
+      type: "object"
+      properties:
+        email:
+          type: "string"
+  
+    User:
+      type: "object"
+      properties:
+        email:
+          type: "string"
+        isCheckedIn:
+          type: "boolean"
+        isInfected:
+          type: "boolean"
+        possiblyInfected:
+          type: "boolean"
+          
+    NewLocation:
+      type: "object"
+      properties:
+        description:
+          type: "string"
+        maxCapacity:
+          type: "number"
+        address:
+          type: "string"
+        latitude:
+          type: "string"
+        longitude:
+          type: "string"
+    Location:
+      type: "object"
+      properties:
+        id:
+          type: 'string'
+        description:
+          type: "string"
+        maxCapacity:
+          type: "number"
+        capacity:
+          type: "number"
+        address:
+          type: "string"
+        latitude:
+          type: "string"
+        longitude:
+          type: "string"
+    LocationList:
+              type: array
+              items:
+                $ref: '#/components/schemas/Location'
+    Statistics:
+      type: "object"
+      properties:
+        nUsers:
+          type: "number"
+        nLocations:
+          type: "number"
+        nInfections:
+          type: "number"
+        nRisks:
+          type: "number"
+          
+    History:
+      type: "object"
+      properties:
+        date:
+          type: "string"
+        nInfections:
+          type: "number"
+        
+
+
+
+
+externalDocs:
+  description: "Find out more about Swagger"
+  url: "http://swagger.io"
