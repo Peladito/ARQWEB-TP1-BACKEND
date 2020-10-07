@@ -77,7 +77,7 @@ describe("HTTP interface", () => {
         expect(res.body.id).toBe(res2.body.id)
     })
 
-    test("PUT /location/:id should return a location by its id", async () => {
+    test("PUT /location/:id should return404 if the location does not exists", async () => {
         await request.post('/user').send({email:'jhon@salchichon.com'})
         let location = {
                 "name": "test",
@@ -87,14 +87,12 @@ describe("HTTP interface", () => {
                 "latitude": 23.022552,
                 "longitude": 56.3658
         }
-        const res = await request.post('/location').auth('jhon@salchichon.com','').send(location)
-        location.description = "different description"
-        const res2 = await request.put('/location/'+res.body.id).auth('jhon@salchichon.com','').send(location)
-        const res3 = await request.get('/location/'+res.body.id).auth('jhon@salchichon.com','')
-        expect(res2.body.description).toBe(location.description)
-        expect(res3.body.description).toBe(location.description)
+        const res = await request.put('/location/5f7e24a92cf4418988523fef').auth('jhon@salchichon.com','').send(location)
+
+        expect(res.status).toBe(404)
+
     })
-    test("PUT /user/checkin/:id should return ok", async () => {
+    test("POST /user/checkin/:id should return ok", async () => {
         await request.post('/user').send({email:'jhon@salchichon.com'})
         let location = {
                 "name": "test",
@@ -108,5 +106,35 @@ describe("HTTP interface", () => {
         location.description = "different description"
         const res2 = await request.post('/user/checkin/'+res.body.id).auth('jhon@salchichon.com','')
         expect(res2.status).toBe(200)
+    })
+    test("POST /user/checkout should return ok", async () => {
+        await request.post('/user').send({email:'jhon@salchichon.com'})
+        let location = {
+                "name": "test",
+                "description": "a comon test",
+                "maxCapacity": 10,
+                "address": "fakestreet 1234",
+                "latitude": 23.022552,
+                "longitude": 56.3658
+        }
+        const res = await request.post('/location').auth('jhon@salchichon.com','').send(location)
+        await request.post('/user/checkin/'+res.body.id).auth('jhon@salchichon.com','')
+        const res2 = await request.post('/user/checkout').auth('jhon@salchichon.com','')
+        expect(res2.status).toBe(200)
+    })
+    test("POST /user/checkout should return 409 if it was not made a previous checkin", async () => {
+        await request.post('/user').send({email:'jhon@salchichon.com'})
+        let location = {
+                "name": "test",
+                "description": "a comon test",
+                "maxCapacity": 10,
+                "address": "fakestreet 1234",
+                "latitude": 23.022552,
+                "longitude": 56.3658
+        }
+        const res = await request.post('/location').auth('jhon@salchichon.com','').send(location)
+        location.description = "different description"
+        const res2 = await request.post('/user/checkout').auth('jhon@salchichon.com','')
+        expect(res2.status).toBe(409)
     })
 });

@@ -1,0 +1,60 @@
+{
+    "validTrue":[
+        {   
+            "description":"Happy path",
+            "dependencies":{
+                "fetchUser":"validTrue",
+                "checkoutAllowed":"validTrue",
+                "checkout":"validTrue"
+            }
+            
+        }
+    ],
+    "errored":[
+        {   
+            "description":"Unexisting user should throw an error",
+            "dependencies":{
+                "fetchUser":"validFalse",
+                "checkoutAllowed":"shouldNotBeUsed",
+                "checkout":"shouldNotBeUsed"
+            },
+            "throws":"UnexistingUserError"
+        },
+        {   
+            "description":"Error when fetchUser throws",
+            "dependencies":{
+                "fetchUser":"errored",
+                "checkoutAllowed":"shouldNotBeUsed",
+                "checkout":"shouldNotBeUsed"
+            },
+            "throws":"CheckOutError"
+        },
+        {   
+            "description":"Error when checkoutAllowed returns false",
+            "dependencies":{
+                "fetchUser":"validTrue",
+                "checkoutAllowed":"validFalse",
+                "checkout":"shouldNotBeUsed"
+            },
+            "throws":"checkoutNotAllowedError"
+        },
+        {   
+            "description":"Error when checkoutAllowed throws",
+            "dependencies":{
+                "fetchUser":"validTrue",
+                "checkoutAllowed":"errored",
+                "checkout":"shouldNotBeUsed"
+            },
+            "throws":"CheckOutError"
+        },
+        {   
+            "description":"Error when checkout throws",
+            "dependencies":{
+                "fetchUser":"validTrue",
+                "checkoutAllowed":"validTrue",
+                "checkout":"errored"
+            },
+            "throws":"CheckOutError"
+        }
+    ]
+}

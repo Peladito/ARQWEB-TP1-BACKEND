@@ -1,7 +1,7 @@
 require('dotenv').config()
 require('mongoose');
 const config = require('../../../config')
-const {persistUser, userExists, deleteAll, fetchUser, persistLocation, fetchLocation, updateLocation, checkIn, checkinAllowed} = require('../../../data-access')(config)
+const {persistUser, userExists, deleteAll, fetchUser, persistLocation, fetchLocation, updateLocation, checkIn, checkinAllowed, checkoutAllowed} = require('../../../data-access')(config)
 
 
 describe("Data access", () => {
@@ -116,7 +116,15 @@ describe("Data access", () => {
         expect(res).toBe(true)
         
     });
-    test("checkinAllowed should return true if the user has no checkin without a checkout time", async () => {
+    test("checkoutAllowed should return false if there is no checkin made without a checkout", async () => {
+        let userm = await persistUser(user)
+
+        let res = await checkoutAllowed({user:userm})
+
+        expect(res).toBe(false)
+        
+    });
+    test("checkoutAllowed should return true if the user has a checkin without a checkout time", async () => {
         let userm = await persistUser(user)
         let locationD = {
             "name": "test",
@@ -128,10 +136,12 @@ describe("Data access", () => {
             "owner": userm
         }
         let location = await persistLocation(locationD)
-        await checkIn({user:userm, location}) 
-        let res = await checkinAllowed({user:userm, location})
 
-        expect(res).toBe(false)
+        await checkIn({user:userm, location})
+
+        let res = await checkoutAllowed({user:userm})
+
+        expect(res).toBe(true)
         
     });
 

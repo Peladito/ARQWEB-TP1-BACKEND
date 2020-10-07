@@ -52,6 +52,14 @@ const checkIn = ({checksModel}) => async ({location, user}) => {
 const checkinAllowed = ({checksModel}) => async ({user}) => {
     return 0 === await checksModel.count({user: user.id, checkout: null})
 }
+const checkoutAllowed = ({checksModel}) => async ({user}) => {
+   return 0 < await checksModel.count({user: user.id, checkout: null})
+}
+const checkout = ({checksModel}) => async ({id}) => {
+   let check = await checksModel.findOne({user: id, checkout: null})
+   check.checkout = new Date()
+   await check.save()
+}
  module.exports = (dependencies) => {
     return {
         userExists: userExists(dependencies),
@@ -64,7 +72,9 @@ const checkinAllowed = ({checksModel}) => async ({user}) => {
         updateLocation: updateLocation(dependencies),
         isLocationOwner: isLocationOwner(dependencies),
         checkIn: checkIn(dependencies),
-        checkinAllowed: checkinAllowed(dependencies)
+        checkinAllowed: checkinAllowed(dependencies),
+        checkoutAllowed: checkoutAllowed(dependencies),
+        checkout: checkout(dependencies)
 
     }
 }
