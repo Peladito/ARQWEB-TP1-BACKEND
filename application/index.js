@@ -1,2 +1,6 @@
 const createUser = require('./createUser')
-module.exports = dependencies => ({createUserUOC: createUser(dependencies)})
+const createLocation = require('./createLocation')
+module.exports = dependencies => ({
+    createUserUOC: createUser(dependencies),
+    createLocationUOC: createLocation(dependencies)
+})

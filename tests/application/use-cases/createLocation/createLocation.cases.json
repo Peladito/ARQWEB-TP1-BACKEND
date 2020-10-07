@@ -1,0 +1,60 @@
+{
+    "validTrue":[
+        {   
+            "description":"Happy path",
+            "dependencies":{
+                "fetchUser":"validTrue",
+                "locationExists":"validFalse",
+                "persistLocation":"validTrue"
+            }
+            
+        }
+    ],
+    "errored":[
+        {   
+            "description":"Location exists",
+            "dependencies":{
+                "fetchUser":"validTrue",
+                "locationExists":"validTrue",
+                "persistLocation":"validTrue"
+            },
+            "throws":"LocationAlreadyExistsError"
+        },
+        {   
+            "description":"Error when locationExists throws",
+            "dependencies":{
+                "fetchUser":"validTrue",
+                "locationExists":"errored",
+                "persistLocation":"shouldNotBeUsed"
+            },
+            "throws":"CreateLocationError"
+        },
+        {   
+            "description":"Error when persistLocation throws",
+            "dependencies":{
+                "fetchUser":"validTrue",
+                "locationExists":"validFalse",
+                "persistLocation":"errored"
+            },
+            "throws":"CreateLocationError"
+        },
+        {   
+            "description":"Error when fetchUser throws",
+            "dependencies":{
+                "fetchUser":"errored",
+                "locationExists":"validFalse",
+                "persistLocation":"shouldNotBeUsed"
+            },
+            "throws":"CreateLocationError"
+        },
+        {   
+            "description":"Error when the user does not exists",
+            "dependencies":{
+                "fetchUser":"validFalse",
+                "locationExists":"shouldNotBeUsed",
+                "persistLocation":"shouldNotBeUsed"
+            },
+            "throws":"UnexistingUserError"
+        }
+    ]
+}

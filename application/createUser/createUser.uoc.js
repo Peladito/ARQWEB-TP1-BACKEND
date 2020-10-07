@@ -1,6 +1,6 @@
 const { CreateUserError, UserAlreadyExistsError } = require("./errors");
 
-exports.createUser = ({userExists, persistUser}) => async (user) => {
+exports.createUser = ({userExists, persistUser}) => (unusedActor) => async (user) => {
     try{
         if(await userExists(user)) throw new UserAlreadyExistsError()
         await persistUser(user)

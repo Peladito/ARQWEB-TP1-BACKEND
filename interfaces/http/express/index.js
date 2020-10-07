@@ -8,6 +8,13 @@ function extractParams(req){
   return Object.assign({}, req.body, req.query, req.params);
 }
 
+function extractActor(req){
+  let auth = req.headers.authorization
+  if(!auth || !auth.includes('Basic')) return null
+  let email = Buffer.from(auth.substr(6),'base64').toString('utf8').split(':')[0]
+  return {email}
+}
+
 const errorHandler = (mapper) => async (error, req, res, next) => {
   let {status, data} = mapper.present(error)
   console.log(`Error in endpoint ${req.method} ${req.originalUrl} : ${status}`,data)
@@ -21,7 +28,9 @@ const responseHandler = (mapper) => async (req, res) => {
 
 const endpoint = (uoc) => async (req, res, next) => {
   try {
-    req.results = await uoc(extractParams(req))
+    let actor = extractActor(req)
+    let params = extractParams(req)
+    req.results = await uoc(actor)(params)
     next()
   } catch (error) {
     next(error)
