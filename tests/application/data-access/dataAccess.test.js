@@ -1,7 +1,7 @@
 require('dotenv').config()
 require('mongoose');
 const config = require('../../../config')
-const {persistUser, userExists, deleteAll, fetchUser, persistLocation, fetchLocation, updateLocation, checkIn, checkinAllowed, checkoutAllowed} = require('../../../data-access')(config)
+const {persistUser, userExists, deleteAll, fetchUser, persistLocation, fetchLocation, updateLocation, checkIn, checkinAllowed, checkoutAllowed, persistDiagnostic} = require('../../../data-access')(config)
 
 
 describe("Data access", () => {
@@ -144,5 +144,14 @@ describe("Data access", () => {
         expect(res).toBe(true)
         
     });
+
+    
+    test("persistDiagnostic should not explode", async () => {
+        let userm = await persistUser(user)
+
+        await persistDiagnostic({status:'positive', userm})
+        
+    });
+    
 
 })

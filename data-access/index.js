@@ -5,6 +5,7 @@ module.exports = (configuration)=>{
     const userModel = require('./model/user')
     const locationModel = require('./model/location')
     const checksModel = require('./model/check')
+    const diagnosticModel = require('./model/diagnostic')
     const dals = require('./dal')
-    return dals({userModel,locationModel,checksModel})
+    return dals({userModel,locationModel,checksModel,diagnosticModel})
 }

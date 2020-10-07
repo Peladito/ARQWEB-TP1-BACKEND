@@ -137,4 +137,10 @@ describe("HTTP interface", () => {
         const res2 = await request.post('/user/checkout').auth('jhon@salchichon.com','')
         expect(res2.status).toBe(409)
     })
+    test("POST /user/diagnostic should return ok ", async () => {
+        await request.post('/user').send({email:'jhon@salchichon.com'})
+        
+        const res2 = await request.post('/user/diagnostic').auth('jhon@salchichon.com','')
+        expect(res2.status).toBe(200)
+    })
 });
