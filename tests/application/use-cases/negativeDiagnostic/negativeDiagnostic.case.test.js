@@ -1,17 +1,17 @@
 const {validTrue, validFalse, errored, assertable, responder} = require("../common/entities");
-const { PositiveDiagnosticError, UnexistingUserError } = require("../../../../application/positiveDiagnostic/errors");
-const positiveDiagnosticUOC = require("../../../../application/positiveDiagnostic");
+const { NegativeDiagnosticError, UnexistingUserError } = require("../../../../application/negativeDiagnostic/errors");
+const negativeDiagnosticUOC = require("../../../../application/negativeDiagnostic");
 
 const actor = {}
 const date = new Date()
-describe("positiveDiagnostic uoc cases test", () => {
+describe("negativeDiagnostic uoc cases test", () => {
 	test("Happy path", async () => {
 		
 		let dependencies = {
 			fetchUser: validTrue,
 			persistDiagnostic: validTrue
 		}
-		let uoc = positiveDiagnosticUOC(dependencies)(actor)
+		let uoc = negativeDiagnosticUOC(dependencies)(actor)
 		await uoc({date})
 		
 	});
@@ -22,7 +22,7 @@ describe("positiveDiagnostic uoc cases test", () => {
 			fetchUser: validFalse,
 			persistDiagnostic: shouldNotBeUsed
 		}
-		let uoc = positiveDiagnosticUOC(dependencies)(actor)
+		let uoc = negativeDiagnosticUOC(dependencies)(actor)
 		await expect(uoc({date})).rejects.toThrow(UnexistingUserError)
 		expect(shouldNotBeUsed.isUsed()).toBe(false)
 		
@@ -34,8 +34,8 @@ describe("positiveDiagnostic uoc cases test", () => {
 			fetchUser: errored,
 			persistDiagnostic: shouldNotBeUsed
 		}
-		let uoc = positiveDiagnosticUOC(dependencies)(actor)
-		await expect(uoc({date})).rejects.toThrow(PositiveDiagnosticError)
+		let uoc = negativeDiagnosticUOC(dependencies)(actor)
+		await expect(uoc({})).rejects.toThrow(NegativeDiagnosticError)
 		expect(shouldNotBeUsed.isUsed()).toBe(false)
 		
 	});
@@ -45,8 +45,8 @@ describe("positiveDiagnostic uoc cases test", () => {
 			fetchUser: validTrue,
 			persistDiagnostic: errored
 		}
-		let uoc = positiveDiagnosticUOC(dependencies)(actor)
-		await expect(uoc({date})).rejects.toThrow(PositiveDiagnosticError)
+		let uoc = negativeDiagnosticUOC(dependencies)(actor)
+		await expect(uoc({date})).rejects.toThrow(NegativeDiagnosticError)
 		
 	});
 	test("should throw if parameter is not a timestamp", async () => {
@@ -55,8 +55,8 @@ describe("positiveDiagnostic uoc cases test", () => {
 			fetchUser: shouldNotBeUsed.func,
 			persistDiagnostic: shouldNotBeUsed.func
 		}
-		let uoc = positiveDiagnosticUOC(dependencies)(actor)
-		await expect(uoc({date:'nana'})).rejects.toThrow(PositiveDiagnosticError)
+		let uoc = negativeDiagnosticUOC(dependencies)(actor)
+		await expect(uoc({date:'nana'})).rejects.toThrow(NegativeDiagnosticError)
 		expect(shouldNotBeUsed.isUsed()).toBe(false)
 		
 	});

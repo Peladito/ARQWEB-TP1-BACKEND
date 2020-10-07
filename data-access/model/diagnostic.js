@@ -5,6 +5,7 @@ var DiagnosticSchema = new mongoose.Schema({
         type: String
     },
     user: {type: mongoose.Schema.Types.ObjectId, ref: 'user'},
+    date: Date
     
 },{timestamps:{}})
 

@@ -140,7 +140,14 @@ describe("HTTP interface", () => {
     test("POST /user/diagnostic should return ok ", async () => {
         await request.post('/user').send({email:'jhon@salchichon.com'})
         
-        const res2 = await request.post('/user/diagnostic').auth('jhon@salchichon.com','')
+        const res2 = await request.post('/user/diagnostic/'+(new Date()).getTime()).auth('jhon@salchichon.com','')
         expect(res2.status).toBe(200)
     })
+    test("DELETE /user/diagnostic should return ok ", async () => {
+        await request.post('/user').send({email:'jhon@salchichon.com'})
+        
+        const res2 = await request.delete('/user/diagnostic/'+(new Date()).getTime()).auth('jhon@salchichon.com','')
+        expect(res2.status).toBe(200)
+    })
+
 });

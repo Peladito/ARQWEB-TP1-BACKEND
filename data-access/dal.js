@@ -61,8 +61,9 @@ const checkout = ({checksModel}) => async ({id}) => {
    check.checkout = new Date()
    await check.save()
 }
-const persistDiagnostic = ({diagnosticModel}) => async ({user, status}) => {
-   let c = new diagnosticModel({user,status})
+const persistDiagnostic = ({diagnosticModel}) => async ({user, status, date}) => {
+   date = date?date:new Date()
+   let c = new diagnosticModel({user,status, date})
    await c.save()
    return c
 }

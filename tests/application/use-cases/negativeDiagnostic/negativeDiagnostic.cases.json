@@ -1,0 +1,38 @@
+{
+    "validTrue":[
+        {   
+            "description":"Happy path",
+            "dependencies":{
+                "fetchUser":"validTrue",
+                "persistDiagnostic":"validTrue"
+            }
+            
+        }
+    ],
+    "errored":[
+        {   
+            "description":"should throw UnexistingUser if user does not exists",
+            "dependencies":{
+                "fetchUser":"validFalse",
+                "persistDiagnostic":"shouldNotBeUsed"
+            },
+            "throws":"UnexistingUserError"
+        },
+        {   
+            "description":"should throw if fetchUser is errored",
+            "dependencies":{
+                "fetchUser":"errored",
+                "persistDiagnostic":"shouldNotBeUsed"
+            },
+            "throws":"NegativeDiagnosticError"
+        },
+        {   
+            "description":"should throw if persistDiagnostic is errored",
+            "dependencies":{
+                "fetchUser":"validTrue",
+                "persistDiagnostic":"errored"
+            },
+            "throws":"NegativeDiagnosticError"
+        }
+    ]
+}
