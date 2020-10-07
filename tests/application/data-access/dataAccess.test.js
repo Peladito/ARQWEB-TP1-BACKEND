@@ -1,7 +1,7 @@
 require('dotenv').config()
 require('mongoose');
 const config = require('../../../config')
-const {persistUser, userExists, deleteAll, fetchUser, persistLocation, fetchLocation, updateLocation} = require('../../../data-access')(config)
+const {persistUser, userExists, deleteAll, fetchUser, persistLocation, fetchLocation, updateLocation, checkIn, checkinAllowed} = require('../../../data-access')(config)
 
 
 describe("Data access", () => {
@@ -81,4 +81,58 @@ describe("Data access", () => {
         expect(res.address).toBe("even faker")
         
     });
+    test("checkIn should register a location and time for an user", async () => {
+        let userm = await persistUser(user)
+        let locationD = {
+            "name": "test",
+            "description": "a comon test",
+            "maxCapacity": 10,
+            "address": "fakestreet 1234",
+            "latitude": 23.022552,
+            "longitude": 56.3658,
+            "owner": userm
+        }
+        let location = await persistLocation(locationD)
+
+        await checkIn({user:userm, location})
+
+        
+    });
+    test("checkinAllowed should return true if the user has no checkin without a checkout time", async () => {
+        let userm = await persistUser(user)
+        let locationD = {
+            "name": "test",
+            "description": "a comon test",
+            "maxCapacity": 10,
+            "address": "fakestreet 1234",
+            "latitude": 23.022552,
+            "longitude": 56.3658,
+            "owner": userm
+        }
+        let location = await persistLocation(locationD)
+
+        let res = await checkinAllowed({user:userm, location})
+
+        expect(res).toBe(true)
+        
+    });
+    test("checkinAllowed should return true if the user has no checkin without a checkout time", async () => {
+        let userm = await persistUser(user)
+        let locationD = {
+            "name": "test",
+            "description": "a comon test",
+            "maxCapacity": 10,
+            "address": "fakestreet 1234",
+            "latitude": 23.022552,
+            "longitude": 56.3658,
+            "owner": userm
+        }
+        let location = await persistLocation(locationD)
+        await checkIn({user:userm, location}) 
+        let res = await checkinAllowed({user:userm, location})
+
+        expect(res).toBe(false)
+        
+    });
+
 })

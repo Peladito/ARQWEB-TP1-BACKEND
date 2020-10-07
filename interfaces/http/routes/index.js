@@ -1,6 +1,8 @@
-module.exports = ({createUserUOC, createLocationUOC, getLocationUOC, editLocationUOC}) => ([
+module.exports = ({createUserUOC, createLocationUOC, getLocationUOC, editLocationUOC, checkInUOC}) => ([
     {path:'/user', verb:'POST',uoc:createUserUOC},
+    {path:'/user/checkin/:id', verb:'POST',uoc:checkInUOC},
     {path:'/location', verb:'POST',uoc:createLocationUOC},
     {path:'/location/:id', verb:'GET',uoc:getLocationUOC},
     {path:'/location/:id', verb:'PUT',uoc:editLocationUOC},
+    
 ])

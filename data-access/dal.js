@@ -22,9 +22,10 @@ const userExists = ({userModel}) => async ({email}) => {
     return await userModel.findOne({email})
 
  }
- const deleteAll = ({userModel, locationModel}) => async () => {
+ const deleteAll = ({userModel, locationModel, checksModel}) => async () => {
      await  userModel.deleteMany({})
      await  locationModel.deleteMany({})
+     await  checksModel.deleteMany({})
     return true
  }
 
@@ -40,8 +41,16 @@ const userExists = ({userModel}) => async ({email}) => {
     Object.assign(location, locationData)
    return await locationModel.updateOne({_id:location.id},{$set:location})
 }
-const isLocationOwner = ({locationModel}) => async ({location, user}) => {
+const isLocationOwner = ({}) => async ({location, user}) => {
    return location.owner.toString() === user.id
+}
+const checkIn = ({checksModel}) => async ({location, user}) => {
+   let c = new checksModel({location, user, checkin:new Date()})
+    await c.save()
+    return c
+}
+const checkinAllowed = ({checksModel}) => async ({user}) => {
+    return 0 === await checksModel.count({user: user.id, checkout: null})
 }
  module.exports = (dependencies) => {
     return {
@@ -53,7 +62,9 @@ const isLocationOwner = ({locationModel}) => async ({location, user}) => {
         persistLocation: persistLocation(dependencies),
         fetchLocation: fetchLocation(dependencies),
         updateLocation: updateLocation(dependencies),
-        isLocationOwner: isLocationOwner(dependencies)
+        isLocationOwner: isLocationOwner(dependencies),
+        checkIn: checkIn(dependencies),
+        checkinAllowed: checkinAllowed(dependencies)
 
     }
 }

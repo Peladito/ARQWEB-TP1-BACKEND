@@ -1,0 +1,86 @@
+{
+    "validTrue":[
+        {   
+            "description":"Happy path",
+            "dependencies":{
+                "fetchUser":"validTrue",
+                "fetchLocation":"validFalse",
+                "checkinAllowed":"validTrue",
+                "checkIn":"validTrue"
+            }
+            
+        }
+    ],
+    "errored":[
+        {   
+            "description":"Unexisting user should throw an error",
+            "dependencies":{
+                "fetchUser":"validFalse",
+                "fetchLocation":"shouldNotBeUsed",
+                "checkinAllowed":"shouldNotBeUsed",
+                "checkIn":"shouldNotBeUsed"
+            },
+            "throws":"UnexistingUserError"
+        },
+        {   
+            "description":"Error when fetchUser throws",
+            "dependencies":{
+                "fetchUser":"errored",
+                "fetchLocation":"shouldNotBeUsed",
+                "checkinAllowed":"shouldNotBeUsed",
+                "checkIn":"shouldNotBeUsed"
+            },
+            "throws":"CheckInError"
+        },
+        {   
+            "description":"Error when location does not exists",
+            "dependencies":{
+                "fetchUser":"validTrue",
+                "fetchLocation":"validFalse",
+                "checkinAllowed":"shouldNotBeUsed",
+                "checkIn":"shouldNotBeUsed"
+            },
+            "throws":"UnexistingLocationError"
+        },
+        {   
+            "description":"Error when fetchLocation fails",
+            "dependencies":{
+                "fetchUser":"validTrue",
+                "fetchLocation":"errored",
+                "checkinAllowed":"shouldNotBeUsed",
+                "checkIn":"shouldNotBeUsed"
+            },
+            "throws":"CheckInError"
+        },
+        {   
+            "description":"Error when checkinAllowed returns false",
+            "dependencies":{
+                "fetchUser":"validTrue",
+                "fetchLocation":"validTrue",
+                "checkinAllowed":"validFalse",
+                "checkIn":"shouldNotBeUsed"
+            },
+            "throws":"CheckinNotAllowedError"
+        },
+        {   
+            "description":"Error when checkinAllowed throws",
+            "dependencies":{
+                "fetchUser":"validTrue",
+                "fetchLocation":"validTrue",
+                "checkinAllowed":"errored",
+                "checkIn":"shouldNotBeUsed"
+            },
+            "throws":"CheckInError"
+        },
+        {   
+            "description":"Error when checkIn throws",
+            "dependencies":{
+                "fetchUser":"validTrue",
+                "fetchLocation":"validTrue",
+                "checkinAllowed":"validTrue",
+                "checkIn":"errored"
+            },
+            "throws":"CheckInError"
+        }
+    ]
+}

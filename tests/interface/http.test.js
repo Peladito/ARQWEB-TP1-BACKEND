@@ -89,9 +89,24 @@ describe("HTTP interface", () => {
         }
         const res = await request.post('/location').auth('jhon@salchichon.com','').send(location)
         location.description = "different description"
-        const res2 = await (await request.put('/location/'+res.body.id).auth('jhon@salchichon.com','').send(location))
+        const res2 = await request.put('/location/'+res.body.id).auth('jhon@salchichon.com','').send(location)
         const res3 = await request.get('/location/'+res.body.id).auth('jhon@salchichon.com','')
         expect(res2.body.description).toBe(location.description)
         expect(res3.body.description).toBe(location.description)
+    })
+    test("PUT /user/checkin/:id should return ok", async () => {
+        await request.post('/user').send({email:'jhon@salchichon.com'})
+        let location = {
+                "name": "test",
+                "description": "a comon test",
+                "maxCapacity": 10,
+                "address": "fakestreet 1234",
+                "latitude": 23.022552,
+                "longitude": 56.3658
+        }
+        const res = await request.post('/location').auth('jhon@salchichon.com','').send(location)
+        location.description = "different description"
+        const res2 = await request.post('/user/checkin/'+res.body.id).auth('jhon@salchichon.com','')
+        expect(res2.status).toBe(200)
     })
 });
