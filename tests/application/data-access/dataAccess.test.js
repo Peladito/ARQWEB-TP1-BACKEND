@@ -1,6 +1,6 @@
 require('dotenv').config()
 require('mongoose');
-const config = require('../../../config/config')
+const config = require('../../../config')
 const {persistUser, userExists, deleteAll} = require('../../../data-access')(config)
 
 
