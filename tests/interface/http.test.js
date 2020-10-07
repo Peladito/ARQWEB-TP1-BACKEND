@@ -73,7 +73,25 @@ describe("HTTP interface", () => {
                 "longitude": 56.3658
         }
         const res = await request.post('/location').auth('jhon@salchichon.com','').send(location)
-        const res2 = await request.get('/location').auth('jhon@salchichon.com','')
+        const res2 = await request.get('/location/'+res.body.id).auth('jhon@salchichon.com','')
         expect(res.body.id).toBe(res2.body.id)
+    })
+
+    test("PUT /location/:id should return a location by its id", async () => {
+        await request.post('/user').send({email:'jhon@salchichon.com'})
+        let location = {
+                "name": "test",
+                "description": "a comon test",
+                "maxCapacity": 10,
+                "address": "fakestreet 1234",
+                "latitude": 23.022552,
+                "longitude": 56.3658
+        }
+        const res = await request.post('/location').auth('jhon@salchichon.com','').send(location)
+        location.description = "different description"
+        const res2 = await (await request.put('/location/'+res.body.id).auth('jhon@salchichon.com','').send(location))
+        const res3 = await request.get('/location/'+res.body.id).auth('jhon@salchichon.com','')
+        expect(res2.body.description).toBe(location.description)
+        expect(res3.body.description).toBe(location.description)
     })
 });

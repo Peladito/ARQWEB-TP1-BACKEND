@@ -1,0 +1,86 @@
+{
+    "validTrue":[
+        {   
+            "description":"Happy path",
+            "dependencies":{
+                "fetchUser":"validTrue",
+                "fetchLocation":"validTrue",
+                "isLocationOwner":"validTrue",
+                "updateLocation":"validTrue"
+            }
+            
+        }
+    ],
+    "errored":[
+        {   
+            "description":"Actor is not the owner",
+            "dependencies":{
+                "fetchUser":"validTrue",
+                "fetchLocation":"validTrue",
+                "isLocationOwner":"validFalse",
+                "updateLocation":"shouldNotBeUsed"
+            },
+            "throws":"UnauthorizedUserError"
+        },
+        {   
+            "description":"Error when isLocationOwner throws",
+            "dependencies":{
+                "fetchUser":"validTrue",
+                "fetchLocation":"validTrue",
+                "isLocationOwner":"errored",
+                "updateLocation":"shouldNotBeUsed"
+            },
+            "throws":"EditLocationError"
+        },
+        {   
+            "description":"Error when updateLocation throws",
+            "dependencies":{
+                "fetchUser":"validTrue",
+                "fetchLocation":"validTrue",
+                "isLocationOwner":"validTrue",
+                "updateLocation":"errored"
+            },
+            "throws":"EditLocationError"
+        },
+        {   
+            "description":"Error when fetchLocation throws",
+            "dependencies":{
+                "fetchUser":"validTrue",
+                "fetchLocation":"errored",
+                "isLocationOwner":"shouldNotBeUsed",
+                "updateLocation":"shouldNotBeUsed"
+            },
+            "throws":"EditLocationError"
+        },
+        {   
+            "description":"Error when fetchLocation return null",
+            "dependencies":{
+                "fetchUser":"validTrue",
+                "fetchLocation":"validFalse",
+                "isLocationOwner":"shouldNotBeUsed",
+                "updateLocation":"shouldNotBeUsed"
+            },
+            "throws":"UnexsistingLocationError"
+        },
+        {   
+            "description":"Error when fetchUser return null",
+            "dependencies":{
+                "fetchUser":"validFalse",
+                "fetchLocation":"validTrue",
+                "isLocationOwner":"shouldNotBeUsed",
+                "updateLocation":"shouldNotBeUsed"
+            },
+            "throws":"UnexsistingUserError"
+        },
+        {   
+            "description":"Error when fetchUser throws",
+            "dependencies":{
+                "fetchUser":"errored",
+                "fetchLocation":"validTrue",
+                "isLocationOwner":"shouldNotBeUsed",
+                "updateLocation":"shouldNotBeUsed"
+            },
+            "throws":"EditLocationError"
+        }
+    ]
+}

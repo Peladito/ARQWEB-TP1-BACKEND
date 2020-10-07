@@ -1,7 +1,7 @@
 require('dotenv').config()
 require('mongoose');
 const config = require('../../../config')
-const {persistUser, userExists, deleteAll, fetchUser, persistLocation, fetchLocation} = require('../../../data-access')(config)
+const {persistUser, userExists, deleteAll, fetchUser, persistLocation, fetchLocation, updateLocation} = require('../../../data-access')(config)
 
 
 describe("Data access", () => {
@@ -63,5 +63,22 @@ describe("Data access", () => {
         expect(res.name).toBe("test")
         
     });
-    
+    test("should update a location", async () => {
+        let userm = await persistUser(user)
+        let locationD = {
+            "name": "test",
+            "description": "a comon test",
+            "maxCapacity": 10,
+            "address": "fakestreet 1234",
+            "latitude": 23.022552,
+            "longitude": 56.3658,
+            "owner": userm
+        }
+        let location = await persistLocation(locationD)
+        locationD.address = "even faker"
+        await updateLocation({location:{id:location.id},locationData:locationD})
+        let res =  await fetchLocation({})
+        expect(res.address).toBe("even faker")
+        
+    });
 })

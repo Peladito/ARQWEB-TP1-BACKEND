@@ -29,8 +29,20 @@ const userExists = ({userModel}) => async ({email}) => {
  }
 
  const fetchLocation = ({locationModel}) => async (location) => {
+    if(location.id){
+       location._id = location.id
+       delete location.id
+    }
      return await locationModel.findOne(location)
  }
+ const updateLocation = ({locationModel}) => async ({location, locationData}) => {
+    delete locationData._id
+    Object.assign(location, locationData)
+   return await locationModel.updateOne({_id:location.id},{$set:location})
+}
+const isLocationOwner = ({locationModel}) => async ({location, user}) => {
+   return location.owner.toString() === user.id
+}
  module.exports = (dependencies) => {
     return {
         userExists: userExists(dependencies),
@@ -39,7 +51,9 @@ const userExists = ({userModel}) => async ({email}) => {
         deleteAll: deleteAll(dependencies),
         locationExists: locationExists(dependencies),
         persistLocation: persistLocation(dependencies),
-        fetchLocation: fetchLocation(dependencies)
+        fetchLocation: fetchLocation(dependencies),
+        updateLocation: updateLocation(dependencies),
+        isLocationOwner: isLocationOwner(dependencies)
 
     }
 }

@@ -2,7 +2,7 @@
 const errorMapper = {
     UserAlreadyExistsError: 409,
     LocationAlreadyExistsError: 409,
-    UnexistingUserErrorError: 403
+    UnexistingUserError: 403
 }
 
 exports.present = function(error){

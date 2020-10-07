@@ -6,7 +6,7 @@ exports.createLocation = ({locationExists, persistLocation, fetchUser}) => actor
         if(!owner) throw new UnexistingUserError() 
         if(await locationExists(location)) throw new LocationAlreadyExistsError()
         location.owner = owner
-        await persistLocation(location)
+        return await persistLocation(location)
     }catch(error){
         if(error instanceof LocationAlreadyExistsError || error instanceof UnexistingUserError) throw error
         throw new CreateLocationError(error)
