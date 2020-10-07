@@ -1,0 +1,27 @@
+{
+    "validTrue":[
+        {   
+            "description":"Happy path",
+            "dependencies":{
+                "fetchLocation":"validTrue"
+            }
+            
+        }
+    ],
+    "errored":[
+        {   
+            "description":"Location does not exists",
+            "dependencies":{
+                "fetchLocation":"validFalse"
+            },
+            "throws":"UnexistingLocation"
+        },
+        {   
+            "description":"Error when fetchLocation throws",
+            "dependencies":{
+                "fetchLocation":"errored"
+            },
+            "throws":"GetLocationError"
+        }
+    ]
+}
