@@ -1,8 +1,7 @@
 const {validTrue, validFalse, errored, assertable, responder} = require("../common/entities");
-const { CreateUserError, UserAlreadyExistsError } = require("../../../../application/use-cases/createUser/errors");
-const createUserUOC = require("../../../../application/use-cases/createUser");
+const { CreateUserError, UserAlreadyExistsError } = require("../../../../application/createUser/errors");
+const createUserUOC = require("../../../../application/createUser");
 
-const actorDependencies = {getUserAndAppByIdentification: validTrue,can: validTrue}
 
 describe("createUser uoc cases test", () => {
 	test("Happy path", async () => {
@@ -11,7 +10,6 @@ describe("createUser uoc cases test", () => {
 			userExists: validFalse,
 			persistUser: validTrue
 		}
-		Object.assign(dependencies, actorDependencies)
 		let uoc = createUserUOC(dependencies)
 		await uoc({})
 		
@@ -22,7 +20,6 @@ describe("createUser uoc cases test", () => {
 			userExists: validTrue,
 			persistUser: validTrue
 		}
-		Object.assign(dependencies, actorDependencies)
 		let uoc = createUserUOC(dependencies)
 		await expect(uoc({})).rejects.toThrow(UserAlreadyExistsError)
 		
@@ -33,7 +30,6 @@ describe("createUser uoc cases test", () => {
 			userExists: errored,
 			persistUser: validTrue
 		}
-		Object.assign(dependencies, actorDependencies)
 		let uoc = createUserUOC(dependencies)
 		await expect(uoc({})).rejects.toThrow(CreateUserError)
 		
@@ -44,7 +40,6 @@ describe("createUser uoc cases test", () => {
 			userExists: validFalse,
 			persistUser: errored
 		}
-		Object.assign(dependencies, actorDependencies)
 		let uoc = createUserUOC(dependencies)
 		await expect(uoc({})).rejects.toThrow(CreateUserError)
 		
