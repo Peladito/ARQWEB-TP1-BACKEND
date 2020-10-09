@@ -7,6 +7,7 @@ const checkOut = require('./checkOut')
 const positiveDiagnostic = require('./positiveDiagnostic')
 const negativeDiagnostic = require('./negativeDiagnostic')
 const getUser = require('./getUser')
+const listLocations = require('./listLocations')
 module.exports = dependencies => ({
     createUserUOC: createUser(dependencies),
     createLocationUOC: createLocation(dependencies),
@@ -16,5 +17,6 @@ module.exports = dependencies => ({
     checkOutUOC: checkOut(dependencies),
     positiveDiagnosticUOC: positiveDiagnostic(dependencies),
     negativeDiagnosticUOC: negativeDiagnostic(dependencies),
-    getUserUOC: getUser(dependencies)
+    getUserUOC: getUser(dependencies),
+    listLocationsUOC: listLocations(dependencies)
 })

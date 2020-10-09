@@ -1,0 +1,83 @@
+{
+    "validTrue":[
+        {   
+            "description":"Happy path for admin",
+            "dependencies":{
+                "fetchUser": "validTrue",
+                "isAdmin":"validTrue",
+                "fetchAllLocations":"shouldBeUsed",
+                "fetchOwnedLocations":"shouldNotBeUsed"
+            }
+            
+        },
+        {   
+            "description":"Happy path for non admin",
+            "dependencies":{
+                "fetchUser": "validTrue",
+                "isAdmin":"validFalse",
+                "fetchAllLocations":"shouldNotBeUsed",
+                "fetchOwnedLocations":"shouldBeUsed"
+            }
+            
+        }
+    ],
+    "errored":[
+        {   
+            "description":"should throw if the admin check fails",
+            "dependencies":{
+                "fetchUser": "validTrue",
+                "isAdmin":"errored",
+                "fetchAllLocations":"shouldNotBeUsed",
+                "fetchOwnedLocations":"shouldNotBeUsed"
+            },
+            "throws":"ListLocationsError"
+            
+        },
+        {   
+            "description":"should throw if fetchAllLocations fails",
+            "dependencies":{
+                "fetchUser": "validTrue",
+                "isAdmin":"validTrue",
+                "fetchAllLocations":"errored",
+                "fetchOwnedLocations":"shouldNotBeUsed"
+            },
+            "throws":"ListLocationsError"
+            
+        },
+        {   
+            "description":"should throw if fetchOwnedLocations fails",
+            "dependencies":{
+                "fetchUser": "validTrue",
+                "isAdmin":"validFalse",
+                "fetchAllLocations":"shouldNotBeUsed",
+                "fetchOwnedLocations":"errored"
+            },
+            "throws":"ListLocationsError"
+            
+        }
+        ,
+        {   
+            "description":"should throw if fetchUser fails",
+            "dependencies":{
+                "fetchUser":"errored",
+                "isAdmin":"shouldNotBeUsed",
+                "fetchAllLocations":"shouldNotBeUsed",
+                "fetchOwnedLocations":"shouldNotBeUsed"
+            },
+            "throws":"ListLocationsError"
+            
+        }
+        {   
+            "description":"should throw if fetchUser returns nothing",
+            "dependencies":{
+                "fetchUser":"validFalse",
+                "isAdmin":"shouldNotBeUsed",
+                "fetchAllLocations":"shouldNotBeUsed",
+                "fetchOwnedLocations":"shouldNotBeUsed"
+            },
+            "throws":"UnexistingUser"
+            
+        }
+        
+    ]
+}

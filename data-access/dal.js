@@ -3,8 +3,8 @@ const userExists = ({userModel}) => async ({email}) => {
    let count = await userModel.countDocuments({email})
    return count > 0
 }
-const persistUser = ({userModel}) => async ({email}) => {
-   let u = new userModel({email})
+const persistUser = ({userModel}) => async ({email, isAdmin=false}) => {
+   let u = new userModel({email, isAdmin})
    await u.save()
    return u
 }
@@ -119,6 +119,17 @@ const isPossiblyInfected = ({checksModel, diagnosticModel}) => async ({user}) =>
    let curedDate = lastDiagnostic && lastDiagnostic.date > curedTimespan?lastDiagnostic.date:curedTimespan
    return 0 < await checksModel.count({user: user.id, possibleInfection:true, checkin:{$gt:curedDate}})
 }
+
+const isAdmin = ({})=>({user})=>{
+   return user.isAdmin === true
+}
+
+const fetchAllLocations = ({locationModel}) => () => {
+   return locationModel.find({})
+}
+const fetchOwnedLocations = ({locationModel}) => ({user}) => {
+   return locationModel.find({owner:user})
+}
 module.exports = (dependencies) => {
    return {
       userExists: userExists(dependencies),
@@ -136,7 +147,10 @@ module.exports = (dependencies) => {
       checkout: checkout(dependencies),
       persistDiagnostic: persistDiagnostic(dependencies),
       isInfected: isInfected(dependencies),
-      isPossiblyInfected: isPossiblyInfected(dependencies)
+      isPossiblyInfected: isPossiblyInfected(dependencies),
+      isAdmin: isAdmin(dependencies),
+      fetchAllLocations: fetchAllLocations(dependencies),
+      fetchOwnedLocations: fetchOwnedLocations(dependencies)
       
    }
 }
