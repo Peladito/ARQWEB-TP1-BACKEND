@@ -365,10 +365,15 @@ const {persistUser,
                 "longitude": 56.3658,
                 "owner": user2
             }
-            await persistLocation(locationD)
-            await persistLocation(locationD2)
+            let loc1 = await persistLocation(locationD)
+            let loc2 = await persistLocation(locationD2)
+            await checkIn({user:user2, location:loc2, checkin:nMinutesBefore(45)})
+            await checkIn({user:user1, location:loc1, checkin:nMinutesBefore(45)})
+            await checkout(user1,nMinutesBefore(5))
             let arr = await fetchAllLocations({})
             expect(arr.length).toBe(2)
+            expect(arr.find(l=>l.name=="test4").occupation).toBe(1)
+            expect(arr.find(l=>l.name=="test3").occupation).toBe(0)
             
         });
     })

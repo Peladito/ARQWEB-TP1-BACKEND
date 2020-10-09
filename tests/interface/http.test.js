@@ -163,6 +163,7 @@ describe("HTTP interface", () => {
         expect(res2.body).toMatchObject(expectedOutput)
     })
     test("GET /locations should return ok ", async () => {
+        await dataAccess.persistUser({email:"admin", isAdmin:true})
         await request.post('/user').send({email:'jhon@salchichon.com'})
         let location = {
             "name": "test",
@@ -173,9 +174,15 @@ describe("HTTP interface", () => {
             "longitude": 56.3658
         }
         await request.post('/location').auth('jhon@salchichon.com','').send(location)
-        const res2 = await request.get('/location').auth('jhon@salchichon.com','')
+        let res2 = await request.get('/location').auth('jhon@salchichon.com','')
         expect(res2.status).toBe(200)
         expect(res2.body.length).toBe(1)
+
+        res2 = await request.get('/location').auth('admin','')
+        expect(res2.status).toBe(200)
+        expect(res2.body.length).toBe(1)
+        expect(res2.body[0].occupation).toBe(0)
     })
+
     
 });

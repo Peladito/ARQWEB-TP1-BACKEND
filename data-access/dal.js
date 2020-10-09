@@ -124,11 +124,18 @@ const isAdmin = ({})=>({user})=>{
    return user.isAdmin === true
 }
 
-const fetchAllLocations = ({locationModel}) => () => {
-   return locationModel.find({})
+const fetchAllLocations = ({locationModel, checksModel}) => async ({user}) => {
+   
+   let owner = user?{owner:user}:{}
+   let locations = await locationModel.find(owner)
+   let checks = await checksModel.find({checkout:{$exists:false},location:{$in:locations.map(l=>l._id)}})
+   return locations.map(l=>{
+      let loc = l.toObject()
+      return {...loc, occupation:checks.filter(c=>c.location.toString() === l.id).length}
+   })
 }
-const fetchOwnedLocations = ({locationModel}) => ({user}) => {
-   return locationModel.find({owner:user})
+const fetchOwnedLocations = (dependencies) => ({user}) => {
+   return fetchAllLocations(dependencies)({user})
 }
 module.exports = (dependencies) => {
    return {
