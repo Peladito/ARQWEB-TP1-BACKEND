@@ -150,4 +150,17 @@ describe("HTTP interface", () => {
         expect(res2.status).toBe(200)
     })
 
+    test("GET /user should return ok ", async () => {
+        await request.post('/user').send({email:'jhon@salchichon.com'})
+        const expectedOutput = {
+            "email": 'jhon@salchichon.com',
+            "isCheckedIn": expect.any(Boolean),
+            "isInfected": expect.any(Boolean),
+            "possiblyInfected": expect.any(Boolean)
+        }
+        const res2 = await request.get('/user').auth('jhon@salchichon.com','')
+        expect(res2.status).toBe(200)
+        expect(res2.body).toMatchObject(expectedOutput)
+    })
+
 });

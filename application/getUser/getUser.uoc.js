@@ -7,7 +7,7 @@ exports.getUser = ({fetchUser, checkoutAllowed, isInfected, isPossiblyInfected})
         let isCheckedIn = await checkoutAllowed({user})
         let infected = await isInfected({user})
         let possiblyInfected = await isPossiblyInfected({user})
-        return {email: user.email, isCheckedIn, isInfected: infected, isPossibleInfected: possiblyInfected}
+        return {email: user.email, isCheckedIn, isInfected: infected, possiblyInfected}
     }catch(error){
         if(error instanceof UnexistingUserError) throw error
         throw new GetUserError(error)

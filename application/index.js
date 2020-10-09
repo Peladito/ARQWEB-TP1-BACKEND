@@ -16,5 +16,5 @@ module.exports = dependencies => ({
     checkOutUOC: checkOut(dependencies),
     positiveDiagnosticUOC: positiveDiagnostic(dependencies),
     negativeDiagnosticUOC: negativeDiagnostic(dependencies),
-    getUser: getUser(dependencies)
+    getUserUOC: getUser(dependencies)
 })
