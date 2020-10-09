@@ -10,6 +10,7 @@ const getUser = require('./getUser')
 const listLocations = require('./listLocations')
 const getStatistics = require('./getStatistics')
 const getConfigurations = require('./getConfigurations')
+const editConfiguration = require('./editConfiguration')
 module.exports = dependencies => ({
     createUserUOC: createUser(dependencies),
     createLocationUOC: createLocation(dependencies),
@@ -22,5 +23,6 @@ module.exports = dependencies => ({
     getUserUOC: getUser(dependencies),
     listLocationsUOC: listLocations(dependencies),
     getStatisticsUOC: getStatistics(dependencies),
-    getConfigurationsUOC: getConfigurations(dependencies)
+    getConfigurationsUOC: getConfigurations(dependencies),
+    editConfigurationUOC: editConfiguration(dependencies)
 })

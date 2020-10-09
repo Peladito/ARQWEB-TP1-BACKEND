@@ -218,5 +218,17 @@ describe("HTTP interface", () => {
         expect(res2.body).toMatchObject(expecterdResponse)
 
     })
+    test("PUT /configurations should update configurations", async () => {
+        await dataAccess.persistUser({email:"admin@admin.com", isAdmin:true})
+        let res2 = await request.get('/configurations').auth('admin@admin.com','')
+        res2 = await request.put('/configurations').auth('admin@admin.com','').send({daysToBeCured:4, minutesForContagionByContact:4 })
+        const expecterdResponse = {
+            daysToBeCured: 4,
+            minutesForContagionByContact: 4,
+        }
+        expect(res2.status).toBe(200)
+        res2 = await request.get('/configurations').auth('admin@admin.com','')
+        expect(res2.body).toMatchObject(expecterdResponse)
+    })
     
 });
