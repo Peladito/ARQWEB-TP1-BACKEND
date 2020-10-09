@@ -114,7 +114,7 @@ const isPossiblyInfected = ({checksModel, diagnosticModel}) => async ({user}) =>
    let lastDiagnostic = await diagnosticModel.findOne({user:user.id, date:{$gt:curedTimespan()}}, null, {limit:1, sort: { _id : 'desc' }})
    if(lastDiagnostic && lastDiagnostic.status ==='positive') return true
    
-   let curedDate = lastDiagnostic && lastDiagnostic.date > curedTimespan()?lastDiagnostic.date:curedTimespan
+   let curedDate = lastDiagnostic && lastDiagnostic.date > curedTimespan()?lastDiagnostic.date:curedTimespan()
    return 0 < await checksModel.count({user: user.id, possibleInfection:true, checkin:{$gt:curedDate}})
 }
 
