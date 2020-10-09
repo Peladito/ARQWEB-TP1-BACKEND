@@ -183,6 +183,30 @@ describe("HTTP interface", () => {
         expect(res2.body.length).toBe(1)
         expect(res2.body[0].occupation).toBe(0)
     })
+    test("GET /statistics should return ok when accessing with the user and 403 with a normal user ", async () => {
+        await dataAccess.persistUser({email:"admin@admin.com", isAdmin:true})
+        await request.post('/user').send({email:'jhon@salchichon.com'})
+        let location = {
+            "name": "test",
+            "description": "a comon test",
+            "maxCapacity": 10,
+            "address": "fakestreet 1234",
+            "latitude": 23.022552,
+            "longitude": 56.3658
+        }
+        const expecterdResponse = {
+            nLocations: expect.any(Number),
+            nUsers: expect.any(Number),
+            nInfections: expect.any(Number),
+            nRisks: expect.any(Number)
+        }
+        await request.post('/location').auth('jhon@salchichon.com','').send(location)
+        let res2 = await request.get('/statistics').auth('admin@admin.com','')
+        expect(res2.status).toBe(200)
+        expect(res2.body).toMatchObject(expecterdResponse)
+        res2 = await request.get('/statistics').auth('jhon@salchichon.com','')
+        expect(res2.status).toBe(403)
 
+    })
     
 });

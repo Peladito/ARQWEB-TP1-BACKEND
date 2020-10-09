@@ -1,4 +1,4 @@
-module.exports = ({createUserUOC, createLocationUOC, getLocationUOC, editLocationUOC, checkInUOC, checkOutUOC, positiveDiagnosticUOC, negativeDiagnosticUOC, getUserUOC, listLocationsUOC}) => ([
+module.exports = ({createUserUOC, createLocationUOC, getLocationUOC, editLocationUOC, checkInUOC, checkOutUOC, positiveDiagnosticUOC, negativeDiagnosticUOC, getUserUOC, listLocationsUOC, getStatisticsUOC}) => ([
     {path:'/user', verb:'POST',uoc:createUserUOC},
     {path:'/user', verb:'GET',uoc:getUserUOC},
     {path:'/user/checkin/:id', verb:'POST',uoc:checkInUOC},
@@ -9,5 +9,6 @@ module.exports = ({createUserUOC, createLocationUOC, getLocationUOC, editLocatio
     {path:'/location', verb:'GET',uoc:listLocationsUOC},
     {path:'/location/:id', verb:'GET',uoc:getLocationUOC},
     {path:'/location/:id', verb:'PUT',uoc:editLocationUOC},
+    {path:'/statistics', verb:'GET',uoc:getStatisticsUOC},
     
 ])

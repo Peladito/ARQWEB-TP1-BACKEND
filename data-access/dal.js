@@ -1,4 +1,4 @@
-
+const curedTimespan = () => ndaysBefore(15)
 const userExists = ({userModel}) => async ({email}) => {
    let count = await userModel.countDocuments({email})
    return count > 0
@@ -106,17 +106,15 @@ function ndaysBefore(ndays, date=new Date()){
    return timespan
 }
 const isInfected = ({diagnosticModel}) => async ({user}) => {
-   let curedTimespan = ndaysBefore(15)
-   let lastDiagnostic = await diagnosticModel.findOne({user:user.id, date:{$gt:curedTimespan}}, null, {limit:1, sort: { _id : 'desc' }})
+   let lastDiagnostic = await diagnosticModel.findOne({user:user.id, date:{$gt:curedTimespan()}}, null, {limit:1, sort: { _id : 'desc' }})
    return lastDiagnostic!==null && lastDiagnostic.status ==='positive'
 }
 
 const isPossiblyInfected = ({checksModel, diagnosticModel}) => async ({user}) => {
-   let curedTimespan = ndaysBefore(15)
-   let lastDiagnostic = await diagnosticModel.findOne({user:user.id, date:{$gt:curedTimespan}}, null, {limit:1, sort: { _id : 'desc' }})
+   let lastDiagnostic = await diagnosticModel.findOne({user:user.id, date:{$gt:curedTimespan()}}, null, {limit:1, sort: { _id : 'desc' }})
    if(lastDiagnostic && lastDiagnostic.status ==='positive') return true
    
-   let curedDate = lastDiagnostic && lastDiagnostic.date > curedTimespan?lastDiagnostic.date:curedTimespan
+   let curedDate = lastDiagnostic && lastDiagnostic.date > curedTimespan()?lastDiagnostic.date:curedTimespan
    return 0 < await checksModel.count({user: user.id, possibleInfection:true, checkin:{$gt:curedDate}})
 }
 
@@ -136,6 +134,35 @@ const fetchAllLocations = ({locationModel, checksModel}) => async ({user}) => {
 }
 const fetchOwnedLocations = (dependencies) => ({user}) => {
    return fetchAllLocations(dependencies)({user})
+}
+const usersCount = ({userModel}) => ({}) => {
+   return userModel.count({})
+}
+const locationsCount = ({locationModel}) => ({}) => {
+   return locationModel.count({})
+}
+const infectedCount = ({diagnosticModel}) => async ({}) => {
+   let count = await diagnosticModel.aggregate([
+      {$match:{date:{$gt:curedTimespan()}}},
+      {
+        $sort:{ _id:-1 }
+      },
+      {
+        $group: {
+          _id: { user : "$user" },
+          status: { $first : "$status" }
+        }
+      },
+      {$match:{status:'positive'}},
+      {
+          $count: "infections"
+      }
+    ])
+    return count.length?count[0].infections:0
+}
+
+const possibleContagionCount = ({checksModel}) => async ({}) => {
+   return await checksModel.count({possibleInfection:true, checkin:{$gt:curedTimespan()}})
 }
 module.exports = (dependencies) => {
    return {
@@ -157,7 +184,11 @@ module.exports = (dependencies) => {
       isPossiblyInfected: isPossiblyInfected(dependencies),
       isAdmin: isAdmin(dependencies),
       fetchAllLocations: fetchAllLocations(dependencies),
-      fetchOwnedLocations: fetchOwnedLocations(dependencies)
+      fetchOwnedLocations: fetchOwnedLocations(dependencies),
+      locationsCount: locationsCount(dependencies),
+      usersCount: usersCount(dependencies),
+      infectedCount: infectedCount(dependencies),
+      possibleContagionCount: possibleContagionCount(dependencies)
       
    }
 }

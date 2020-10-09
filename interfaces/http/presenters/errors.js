@@ -3,6 +3,7 @@ const errorMapper = {
     UserAlreadyExistsError: 409,
     LocationAlreadyExistsError: 409,
     UnexistingUserError: 403,
+    UnauthorizedUserError: 403,
     UnexistingLocationError: 404,
     CheckOutNotAllowedError: 409
 }

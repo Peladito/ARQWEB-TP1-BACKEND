@@ -1,0 +1,102 @@
+{
+    "validTrue":[
+        {   
+            "description":"Happy path",
+            "dependencies":{
+                "fetchUser": "validTrue",
+                "isAdmin":"validTrue",
+                "locationsCount":"validTrue",
+                "usersCount":"validTrue",
+                "infectedCount":"validTrue",
+                "possibleContagionCount":"validTrue"
+            }
+            
+        }
+    ],
+    "errored":[
+        {   
+            "description":"should not allow non admin to fetch the statistics",
+            "dependencies":{
+                "fetchUser": "validTrue",
+                "isAdmin":"validFalse",
+                "locationsCount":"validTrue",
+                "usersCount":"validTrue",
+                "infectedCount":"validTrue",
+                "possibleContagionCount":"validTrue"
+            },
+            "throws":"UnauthorizedUser"
+        },
+        {   
+            "description":"should throw if fetchUser fails",
+            "dependencies":{
+                "fetchUser": "errored",
+                "isAdmin":"validTrue",
+                "locationsCount":"validTrue",
+                "usersCount":"validTrue",
+                "infectedCount":"validTrue",
+                "possibleContagionCount":"validTrue"
+            },
+            "throws":"GetStatisticsError"
+        },
+        {   
+            "description":"should throw if isAdmin fails",
+            "dependencies":{
+                "fetchUser": "validTrue",
+                "isAdmin":"errored",
+                "locationsCount":"validTrue",
+                "usersCount":"validTrue",
+                "infectedCount":"validTrue",
+                "possibleContagionCount":"validTrue"
+            },
+            "throws":"GetStatisticsError"
+        },
+        {   
+            "description":"should throw if locationsCount fails",
+            "dependencies":{
+                "fetchUser": "validTrue",
+                "isAdmin":"validTrue",
+                "locationsCount":"errored",
+                "usersCount":"validTrue",
+                "infectedCount":"validTrue",
+                "possibleContagionCount":"validTrue"
+            },
+            "throws":"GetStatisticsError"
+        },
+        {   
+            "description":"should throw if usersCount fails",
+            "dependencies":{
+                "fetchUser": "validTrue",
+                "isAdmin":"validTrue",
+                "locationsCount":"validTrue",
+                "usersCount":"errored",
+                "infectedCount":"validTrue",
+                "possibleContagionCount":"validTrue"
+            },
+            "throws":"GetStatisticsError"
+        },
+        {   
+            "description":"should throw if infectedCount fails",
+            "dependencies":{
+                "fetchUser": "validTrue",
+                "isAdmin":"validTrue",
+                "locationsCount":"validTrue",
+                "usersCount":"validTrue",
+                "infectedCount":"errored",
+                "possibleContagionCount":"validTrue"
+            },
+            "throws":"GetStatisticsError"
+        },
+        {   
+            "description":"should throw if possibleContagionCount fails",
+            "dependencies":{
+                "fetchUser": "validTrue",
+                "isAdmin":"validTrue",
+                "locationsCount":"validTrue",
+                "usersCount":"validTrue",
+                "infectedCount":"validTrue",
+                "possibleContagionCount":"errored"
+            },
+            "throws":"GetStatisticsError"
+        }
+    ]
+}
