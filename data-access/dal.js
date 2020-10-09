@@ -45,8 +45,9 @@ const updateLocation = ({locationModel}) => async ({location, locationData}) => 
 const isLocationOwner = ({}) => async ({location, user}) => {
    return location.owner.toString() === user.id
 }
-const checkIn = ({checksModel}) => async ({location, user}) => {
-   let c = new checksModel({location, user, checkin:new Date()})
+const checkIn = ({checksModel}) => async ({location, user, checkin}) => {
+   checkin = checkin?checkin:new Date()
+   let c = new checksModel({location, user, checkin})
    await c.save()
    return c
 }
@@ -56,16 +57,67 @@ const checkinAllowed = ({checksModel}) => async ({user}) => {
 const checkoutAllowed = ({checksModel}) => async ({user}) => {
    return 0 < await checksModel.countDocuments({user: user.id, checkout: null})
 }
-const checkout = ({checksModel}) => async ({id}) => {
-   let check = await checksModel.findOne({user: id, checkout: null})
-   check.checkout = new Date()
+const checkout = ({checksModel}) => async (o, date = new Date) => {
+   let check = await checksModel.findOne({user: o.id, checkout: null})
+   check.checkout = date
    await check.save()
 }
-const persistDiagnostic = ({diagnosticModel}) => async ({user, status, date}) => {
+const persistDiagnostic = ({diagnosticModel, checksModel}) => async ({user, status, date}) => {
    date = date?date:new Date()
    let c = new diagnosticModel({user,status, date})
    await c.save()
-   return c
+   let minContactoEstrechoParaContagio = 30
+   let milisegsMinimos = 1000 * 60 * minContactoEstrechoParaContagio
+   if(status === 'positive'){
+      let placesWhereUserAttended = await checksModel.find({user: user.id, createdAt: {$gt: ndaysBefore(15)}})
+      //agrego checkout a las fechas que no esten finalizadas
+      const moreThanMinimumContagionTime = p=> !p.checkout ||  (p.checkout && p.checkout.getTime()-p.checkin.getTime() > milisegsMinimos)
+      let promises = placesWhereUserAttended.filter(moreThanMinimumContagionTime ).map(async place =>{
+         
+         let coc = place.checkout?place.checkout:null
+         let cic = place.checkin
+         //si el checkout contagion es nulo (no se hizo coc == false) entonces no preguntamos por el
+         //las entradas que no tengan  checkout se contemplan
+         let firstCond = {checkin:{$lte:cic}, checkout:{$gte:cic}}
+         let secondCond = coc?{checkin:{$lte:coc}, checkout:{$gte:cic}} : {checkout:{$gte:cic}}
+         let thirdCond = coc? {checkin:{$lte:cic}, checkout:{$gte:coc}} : {checkin:{$lte:cic}}
+         let forthCond = coc? {checkin:{$gte:cic}, checkout:{$lte:coc}} : {checkin:{$gte:cic}}
+         
+         let first_nocheckout = {checkin:{$lte:cic}, checkout:null}
+         let third_nocheckout ={checkin:{$lte:cic}, checkout:null}
+         let forth_nocheckout ={checkin:{$gte:cic}, checkout:null}
+         let $or = [firstCond,secondCond,thirdCond,forthCond,first_nocheckout,third_nocheckout,forth_nocheckout]
+         //Descartar todos aquellos intervalos que son menores a 30 minutos (ups! :P)
+
+         let milisec = minContactoEstrechoParaContagio * 60 * 1000
+         return await checksModel.updateMany({location:place.location, $or,  $expr: { $gt: [ {$subtract: [ {$ifNull:["$checkout",new Date()]},"$checkin"]} , milisec ] }  },{$set:{possibleInfection: true}})
+      })
+      await Promise.all(promises)
+   }
+   
+}
+function nMinutesBefore(date, minutes){
+   return new Date(date.getTime()  - 1000 * 60 * minutes)
+   
+}
+function ndaysBefore(ndays, date=new Date()){
+   let timespan = date
+   timespan.setDate(timespan.getDate() - ndays);
+   return timespan
+}
+const isInfected = ({diagnosticModel}) => async ({user}) => {
+   let curedTimespan = ndaysBefore(15)
+   let lastDiagnostic = await diagnosticModel.findOne({user:user.id, date:{$gt:curedTimespan}}, null, {limit:1, sort: { _id : 'desc' }})
+   return lastDiagnostic!==null && lastDiagnostic.status ==='positive'
+}
+
+const isPossiblyInfected = ({checksModel, diagnosticModel}) => async ({user}) => {
+   let curedTimespan = ndaysBefore(15)
+   let lastDiagnostic = await diagnosticModel.findOne({user:user.id, date:{$gt:curedTimespan}}, null, {limit:1, sort: { _id : 'desc' }})
+   if(lastDiagnostic && lastDiagnostic.status ==='positive') return true
+   
+   let curedDate = lastDiagnostic && lastDiagnostic.date > curedTimespan?lastDiagnostic.date:curedTimespan
+   return 0 < await checksModel.count({user: user.id, possibleInfection:true, checkin:{$gt:curedDate}})
 }
 module.exports = (dependencies) => {
    return {
@@ -82,7 +134,9 @@ module.exports = (dependencies) => {
       checkinAllowed: checkinAllowed(dependencies),
       checkoutAllowed: checkoutAllowed(dependencies),
       checkout: checkout(dependencies),
-      persistDiagnostic: persistDiagnostic(dependencies)
+      persistDiagnostic: persistDiagnostic(dependencies),
+      isInfected: isInfected(dependencies),
+      isPossiblyInfected: isPossiblyInfected(dependencies)
       
    }
 }

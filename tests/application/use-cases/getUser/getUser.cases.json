@@ -1,0 +1,56 @@
+{
+    "validTrue":[
+        {   
+            "description":"Happy path",
+            "dependencies":{
+                "fetchUser":"validTrue",
+                "checkoutAllowed":"validTrue",
+                "isInfected":"validTrue",
+                "isPossiblyInfected":"validTrue"
+            }
+            
+        }
+    ],
+    "errored":[
+        {   
+            "description":"should throw if fetchUser fails",
+            "dependencies":{
+                "fetchUser":"errored",
+                "checkoutAllowed":"validTrue",
+                "isInfected":"validTrue",
+                "isPossiblyInfected":"validTrue"
+            },
+            "throws":"UnexistingUserError"
+        },
+        {   
+            "description":"should throw if checkoutAllowed fails",
+            "dependencies":{
+                "fetchUser":"validTrue",
+                "checkoutAllowed":"errored",
+                "isInfected":"validTrue",
+                "isPossiblyInfected":"validTrue"
+            },
+            "throws":"GetUserError"
+        },
+        {   
+            "description":"should throw if isInfected fails",
+            "dependencies":{
+                "fetchUser":"validTrue",
+                "checkoutAllowed":"validTrue",
+                "isInfected":"errored",
+                "isPossiblyInfected":"validTrue"
+            },
+            "throws":"GetUserError"
+        },
+        {   
+            "description":"should throw if isPossiblyInfected fails",
+            "dependencies":{
+                "fetchUser":"validTrue",
+                "checkoutAllowed":"validTrue",
+                "isInfected":"validTrue",
+                "isPossiblyInfected":"errored"
+            },
+            "throws":"GetUserError"
+        }
+    ]
+}

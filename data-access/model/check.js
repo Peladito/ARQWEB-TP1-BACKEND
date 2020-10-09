@@ -5,6 +5,10 @@ var ChecksSchema = new mongoose.Schema({
     checkout: Date,
     location:{type: mongoose.Schema.Types.ObjectId, ref: 'location'},
     user:{type: mongoose.Schema.Types.ObjectId, ref: 'user'},
+    possibleInfection: {
+        type: Boolean,
+        default: false
+    }
 },{timestamps:{}})
 
 module.exports = mongoose.model('checks', ChecksSchema)
