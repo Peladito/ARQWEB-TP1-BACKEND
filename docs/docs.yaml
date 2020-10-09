@@ -309,7 +309,7 @@ components:
           type: "string"
         maxCapacity:
           type: "number"
-        capacity:
+        occupation:
           type: "number"
         address:
           type: "string"
