@@ -1,0 +1,50 @@
+{
+    "validTrue":[
+        {   
+            "description":"Happy path",
+            "dependencies":{
+                "fetchUser":"validTrue",
+                "isAdmin":"validTrue",
+                "fetchConfigurations":"validTrue"
+            }
+        }
+    ],
+    "errored":[
+        {   
+            "description":"should throw if fetchUser fails",
+            "dependencies":{
+                "fetchUser":"errored",
+                "isAdmin":"validTrue",
+                "fetchConfigurations":"validTrue"
+            },
+            "throws":"GetConfigurationsError"
+        },
+        {   
+            "description":"should throw if isAdmin fails",
+            "dependencies":{
+                "fetchUser":"validTrue",
+                "isAdmin":"errored",
+                "fetchConfigurations":"validTrue"
+            },
+            "throws":"GetConfigurationsError"
+        },
+        {   
+            "description":"should throw if isAdmin returns false",
+            "dependencies":{
+                "fetchUser":"validTrue",
+                "isAdmin":"validFalse",
+                "fetchConfigurations":"validTrue"
+            },
+            "throws":"UnauthorizedUserError"
+        },
+        {   
+            "description":"should throw if fetchConfigurations throws",
+            "dependencies":{
+                "fetchUser":"validTrue",
+                "isAdmin":"validTrue",
+                "fetchConfigurations":"errored"
+            },
+            "throws":"GetConfigurationsError"
+        }
+    ]
+}

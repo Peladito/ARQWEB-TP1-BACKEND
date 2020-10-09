@@ -21,7 +21,8 @@ const {persistUser,
     locationsCount,
     usersCount,
     infectedCount,
-    possibleContagionCount
+    possibleContagionCount,
+    fetchConfigurations
 } = require('../../../data-access')(config)
 
 
@@ -456,7 +457,18 @@ describe("Data access", () => {
 
         
     });
+    test("fetchConfigurations should return the default configuration", async () => {
+        const expectedConfig = {
+            name: 'main',
+            daysToBeCured: 15,
+            minutesForContagionByContact: 30
+        }
+        let config = await fetchConfigurations({})
+        expect(config).toMatchObject(expectedConfig)
+    });
 })
+
+
 function ndaysBefore(ndays){
     let timespan = new Date();
     timespan.setDate(timespan.getDate() - ndays);

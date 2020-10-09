@@ -1,4 +1,17 @@
-const curedTimespan = () => ndaysBefore(15)
+
+const fetchConfigurations = ({configurationModel}) => async ({}) => {
+   let c =await configurationModel.findOne({name:'main'})
+   if(!c) {
+      c = new configurationModel({name:'main', daysToBeCured:15, minutesForContagionByContact:30})
+      await c.save()
+   }
+   return c
+}
+const persistConfigurations = ({configurationModel}) => async (configuration) => {
+   return configurationModel.findOneAndUpdate({name:'main'},{$set:configuration},{upsert: true})
+}
+const curedTimespan = async () => ndaysBefore(15)
+const minutesForContagionByContact = () => 30
 const userExists = ({userModel}) => async ({email}) => {
    let count = await userModel.countDocuments({email})
    return count > 0
@@ -22,11 +35,12 @@ const fetchUser = ({userModel}) => async ({email}) => {
    return await userModel.findOne({email})
    
 }
-const deleteAll = ({userModel, locationModel, checksModel, diagnosticModel}) => async () => {
+const deleteAll = ({userModel, locationModel, checksModel, diagnosticModel, configurationModel}) => async () => {
    await userModel.deleteMany({})
    await locationModel.deleteMany({})
    await checksModel.deleteMany({})
    await diagnosticModel.deleteMany({})
+   await configurationModel.deleteMany({})
    return true
 }
 
@@ -66,7 +80,7 @@ const persistDiagnostic = ({diagnosticModel, checksModel}) => async ({user, stat
    date = date?date:new Date()
    let c = new diagnosticModel({user,status, date})
    await c.save()
-   let minContactoEstrechoParaContagio = 30
+   let minContactoEstrechoParaContagio = await minutesForContagionByContact()
    let milisegsMinimos = 1000 * 60 * minContactoEstrechoParaContagio
    if(status === 'positive'){
       let placesWhereUserAttended = await checksModel.find({user: user.id, createdAt: {$gt: ndaysBefore(15)}})
@@ -106,15 +120,16 @@ function ndaysBefore(ndays, date=new Date()){
    return timespan
 }
 const isInfected = ({diagnosticModel}) => async ({user}) => {
-   let lastDiagnostic = await diagnosticModel.findOne({user:user.id, date:{$gt:curedTimespan()}}, null, {limit:1, sort: { _id : 'desc' }})
+   let lastDiagnostic = await diagnosticModel.findOne({user:user.id, date:{$gt:await curedTimespan()}}, null, {limit:1, sort: { _id : 'desc' }})
    return lastDiagnostic!==null && lastDiagnostic.status ==='positive'
 }
 
 const isPossiblyInfected = ({checksModel, diagnosticModel}) => async ({user}) => {
-   let lastDiagnostic = await diagnosticModel.findOne({user:user.id, date:{$gt:curedTimespan()}}, null, {limit:1, sort: { _id : 'desc' }})
+   let cTimeSpan = await curedTimespan()
+   let lastDiagnostic = await diagnosticModel.findOne({user:user.id, date:{$gt:cTimeSpan}}, null, {limit:1, sort: { _id : 'desc' }})
    if(lastDiagnostic && lastDiagnostic.status ==='positive') return true
    
-   let curedDate = lastDiagnostic && lastDiagnostic.date > curedTimespan()?lastDiagnostic.date:curedTimespan()
+   let curedDate = lastDiagnostic && lastDiagnostic.date > cTimeSpan?lastDiagnostic.date:cTimeSpan
    return 0 < await checksModel.count({user: user.id, possibleInfection:true, checkin:{$gt:curedDate}})
 }
 
@@ -143,7 +158,7 @@ const locationsCount = ({locationModel}) => ({}) => {
 }
 const infectedCount = ({diagnosticModel}) => async ({}) => {
    let count = await diagnosticModel.aggregate([
-      {$match:{date:{$gt:curedTimespan()}}},
+      {$match:{date:{$gt:await curedTimespan()}}},
       {
         $sort:{ _id:-1 }
       },
@@ -162,7 +177,7 @@ const infectedCount = ({diagnosticModel}) => async ({}) => {
 }
 
 const possibleContagionCount = ({checksModel}) => async ({}) => {
-   return await checksModel.count({possibleInfection:true, checkin:{$gt:curedTimespan()}})
+   return await checksModel.count({possibleInfection:true, checkin:{$gt:await curedTimespan()}})
 }
 module.exports = (dependencies) => {
    return {
@@ -188,7 +203,8 @@ module.exports = (dependencies) => {
       locationsCount: locationsCount(dependencies),
       usersCount: usersCount(dependencies),
       infectedCount: infectedCount(dependencies),
-      possibleContagionCount: possibleContagionCount(dependencies)
-      
+      possibleContagionCount: possibleContagionCount(dependencies),
+      persistConfigurations: persistConfigurations(dependencies),
+      fetchConfigurations: fetchConfigurations(dependencies)
    }
 }

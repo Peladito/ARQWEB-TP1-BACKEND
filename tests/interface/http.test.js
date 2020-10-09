@@ -208,5 +208,15 @@ describe("HTTP interface", () => {
         expect(res2.status).toBe(403)
 
     })
+    test("GET /configurations should return the configurations to the admin user", async () => {
+        await dataAccess.persistUser({email:"admin@admin.com", isAdmin:true})
+        let res2 = await request.get('/configurations').auth('admin@admin.com','')
+        const expecterdResponse = {
+            daysToBeCured: expect.any(Number),
+            minutesForContagionByContact: expect.any(Number),
+        }
+        expect(res2.body).toMatchObject(expecterdResponse)
+
+    })
     
 });
