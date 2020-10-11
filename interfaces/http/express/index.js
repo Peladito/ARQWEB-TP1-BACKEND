@@ -1,9 +1,20 @@
 const express = require("express");
 const expressApp = express();
+const multer  = require('multer')
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './storage')
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname)
+  }
+})
+const upload = multer({ storage })
 
 expressApp.use(express.json());
 expressApp.use(express.urlencoded({ extended: false }));
-
+expressApp.use('/images',express.static('./storage'));
 function extractParams(req){
   return Object.assign({}, req.body, req.query, req.params);
 }
@@ -39,7 +50,7 @@ const endpoint = (uoc) => async (req, res, next) => {
 
 module.exports = (routes = [], responseMapper, errorMapper, port) => {
   routes.forEach(({path, verb, uoc})=>{
-    expressApp[verb.toLowerCase()](path,[endpoint(uoc),responseHandler(responseMapper), errorHandler(errorMapper)])
+    expressApp[verb.toLowerCase()](path,[upload.array('images'), endpoint(uoc),responseHandler(responseMapper), errorHandler(errorMapper)])
   })
 
   expressApp.listen(port)

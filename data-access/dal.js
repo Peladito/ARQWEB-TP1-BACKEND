@@ -25,8 +25,8 @@ const locationExists = ({locationModel}) => async ({email}) => {
    let count = await locationModel.countDocuments({email})
    return count > 0
 }
-const persistLocation = ({locationModel}) => async ({maxCapacity, name, description, latitude, longitude, address, owner}) => {
-   let l = new locationModel({maxCapacity, name, description, latitude, longitude, address, owner})
+const persistLocation = ({locationModel}) => async ({maxCapacity, name, description, latitude, longitude, address, owner, images}) => {
+   let l = new locationModel({maxCapacity, name, description, latitude, longitude, address, owner, images})
    l.position.coordinates =  [longitude, latitude]
    await l.save()
    return l

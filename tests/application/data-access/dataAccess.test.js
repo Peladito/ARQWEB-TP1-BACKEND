@@ -69,7 +69,8 @@ describe("Data access", () => {
             "address": "fakestreet 1234",
             "latitude": 23.022552,
             "longitude": 56.3658,
-            "owner": userm
+            "owner": userm,
+            "images":["one.png","two.png"]
         }
         await persistLocation(location)
         
@@ -83,12 +84,14 @@ describe("Data access", () => {
             "address": "fakestreet 1234",
             "latitude": 23.022552,
             "longitude": 56.3658,
-            "owner": userm
+            "owner": userm,
+            "images":["one.png","two.png"]
         }
         await persistLocation(location)
         
         let res = await fetchLocation({})
         expect(res.name).toBe("test")
+        expect(res.images.length).toBe(2)
         
     });
     test("should update a location", async () => {

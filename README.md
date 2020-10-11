@@ -13,7 +13,9 @@
 ## Desplegar el servidor
 `npm start`
 
-
+## A tener en cuenta
+- Cada 30 segundos se ejecuta un proceso para enviar las posibles notificaciones pendientes
+- Las imagenes de los locales solo vienen con el URN, para la ruta completa hay que poner URL + /images/ + URN (ejemplo: http://localhost:3000/images/nombreImagen.png)
 ## Utilitarios
 
 Para visualizar la base de datos MongoDB se puede utilizar o [NoSQLBooster](https://nosqlbooster.com/) o bien [Robo3T](https://robomongo.org/)

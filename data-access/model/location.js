@@ -13,6 +13,7 @@ var LocationSchema = new mongoose.Schema({
     },
     maxCapacity: Number,
     owner: {type: mongoose.Schema.Types.ObjectId, ref: 'user'},
+    images: []
     
 },{timestamps:{}})
 

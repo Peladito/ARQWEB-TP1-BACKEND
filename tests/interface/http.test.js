@@ -36,6 +36,19 @@ describe("HTTP interface", () => {
         const res = await request.post('/location').auth('jhon@salchichon2.com','').send(location)
         expect(res.status).toBe(200)
     })
+    test("POST /location should allow to send images from the location ", async () => {
+        await request.post('/user').send({email:'jhon@salchichon2.com'})
+
+        const res = await request.post('/location').auth('jhon@salchichon2.com','')
+        .field("name","test2")
+        .field("description","test2")
+        .field("maxCapacity", 10)
+        .field("address", "fakestreet 1234")
+        .field("latitude",23.022552)
+        .field("longitude",23.022552)
+        .attach('images','./tests/interface/testimage.png')
+        expect(res.status).toBe(200)
+    })
     test("POST /location should throw 409 if the location already exists", async () => {
         await request.post('/user').send({email:'jhon@salchichon.com'})
         const location = {

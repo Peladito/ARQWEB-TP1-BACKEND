@@ -300,6 +300,9 @@ components:
           type: "string"
         longitude:
           type: "string"
+        images:
+          type: string
+          format: binary
     Location:
       type: "object"
       properties:
