@@ -1,0 +1,31 @@
+{
+    "validTrue":[
+        {   
+            "description":"Happy path",
+            "dependencies":{
+                "fetchUnsentNotifications":"validTrue",
+                "sendNotifications":"validTrue"
+            }
+            
+        }
+    ],
+    "errored":[
+        {   
+            "description":"should throw fetchUnsentNotifications fails",
+            "dependencies":{
+                "fetchUnsentNotifications":"errored",
+                "sendNotifications":"shouldNotBeUsed"
+            },
+            "throws":"SendNotificationsError"
+        },
+        {   
+            "description":"should throw sendNotifications fails",
+            "dependencies":{
+                "fetchUnsentNotifications":"validTrue",
+                "sendNotifications":"errored"
+            },
+            "throws":"SendNotificationsError"
+        }
+       
+    ]
+}

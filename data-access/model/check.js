@@ -8,7 +8,11 @@ var ChecksSchema = new mongoose.Schema({
     possibleInfection: {
         type: Boolean,
         default: false
-    }
+    },
+    notified: {
+        type: Boolean,
+        default: false
+    },
 },{timestamps:{}})
 
 module.exports = mongoose.model('checks', ChecksSchema)

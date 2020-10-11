@@ -179,6 +179,18 @@ const infectedCount = ({diagnosticModel}) => async ({}) => {
 const possibleContagionCount = ({checksModel}) => async ({}) => {
    return await checksModel.count({possibleInfection:true, checkin:{$gt:await curedTimespan()}})
 }
+
+const fetchUnsentNotifications = ({checksModel}) => async ({}) => {
+   let curedTimespanVal = await curedTimespan()
+   let res = await checksModel.find({checkin:{$gt:curedTimespanVal}, possibleInfection:true, notified:false}).populate('user')
+   return res
+}
+const sendNotifications = ({checksModel, notificationService}) => async (notifications=[]) => {
+   let recipients = notifications.map(n=>n.user.email)
+   await notificationService.sendWarningMail(recipients)
+   let res = await checksModel.updateMany({_id:{$in:notifications.map(r=>r._id)}},{$set:{notified:true}})
+   return res
+}
 module.exports = (dependencies) => {
    return {
       userExists: userExists(dependencies),
@@ -205,6 +217,8 @@ module.exports = (dependencies) => {
       infectedCount: infectedCount(dependencies),
       possibleContagionCount: possibleContagionCount(dependencies),
       persistConfigurations: persistConfigurations(dependencies),
-      fetchConfigurations: fetchConfigurations(dependencies)
+      fetchConfigurations: fetchConfigurations(dependencies),
+      fetchUnsentNotifications: fetchUnsentNotifications(dependencies),
+      sendNotifications: sendNotifications(dependencies)
    }
 }

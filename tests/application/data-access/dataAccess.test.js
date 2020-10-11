@@ -22,7 +22,9 @@ const {persistUser,
     usersCount,
     infectedCount,
     possibleContagionCount,
-    fetchConfigurations
+    fetchConfigurations,
+    fetchUnsentNotifications,
+    sendNotifications
 } = require('../../../data-access')(config)
 
 
@@ -465,6 +467,60 @@ describe("Data access", () => {
         }
         let config = await fetchConfigurations({})
         expect(config).toMatchObject(expectedConfig)
+    });
+    test("fetchUnsentNotifications should return all possible contagions that weren't notified", async () => {
+
+
+        let u = await persistUser(user)
+        let a = await persistUser(admin)
+        locationD = {
+            "name": "test5",
+            "description": "a comon test",
+            "maxCapacity": 10,
+            "address": "fakestreet 1234",
+            "latitude": 23.022552,
+            "longitude": 56.3658,
+            "owner": u
+        }
+        let location = await persistLocation(locationD)
+        await checkIn({user:u, location, checkin:nMinutesBefore(45)})
+        await checkIn({user:a, location, checkin:nMinutesBefore(45)})
+        await persistDiagnostic({user:u, status:'positive', date: new Date()})
+
+
+        const expectedNotif = {
+            user: {
+                email: expect.any(String)
+            }
+        }
+        let [pendingNotification] = await fetchUnsentNotifications({})
+        expect(pendingNotification).toMatchObject(expectedNotif)
+    });
+    test("sendNotifications should send mails and mark checks as notified", async () => {
+
+
+        let u = await persistUser(user)
+        let a = await persistUser(admin)
+        locationD = {
+            "name": "test5",
+            "description": "a comon test",
+            "maxCapacity": 10,
+            "address": "fakestreet 1234",
+            "latitude": 23.022552,
+            "longitude": 56.3658,
+            "owner": u
+        }
+        let location = await persistLocation(locationD)
+        await checkIn({user:u, location, checkin:nMinutesBefore(45)})
+        await checkIn({user:a, location, checkin:nMinutesBefore(45)})
+        await persistDiagnostic({user:u, status:'positive', date: new Date()})
+
+
+        
+        let notifications = await fetchUnsentNotifications({})
+        await sendNotifications(notifications)
+        notifications = await fetchUnsentNotifications({})
+        expect(notifications.length).toBe(0)
     });
 })
 
