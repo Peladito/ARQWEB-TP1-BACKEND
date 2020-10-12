@@ -1,7 +1,7 @@
 const express = require("express");
 const expressApp = express();
 const multer  = require('multer')
-
+const cors = require('cors')
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, './storage')
@@ -13,6 +13,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage })
 
 expressApp.use(express.json());
+expressApp.use(cors())
 expressApp.use(express.urlencoded({ extended: false }));
 expressApp.use('/images',express.static('./storage'));
 function extractParams(req){

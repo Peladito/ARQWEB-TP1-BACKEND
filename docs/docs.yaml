@@ -4,6 +4,10 @@ info:
   version: "1.0.0"
   title: "#YoEstuveAhi"
 
+servers:
+  - url: http://localhost:3000/
+    description: local development
+
 
 
 paths:
@@ -17,7 +21,7 @@ paths:
       requestBody:
         required: true
         content:
-          application/form-data:
+          application/json:
             schema:
               $ref: '#/components/schemas/NewUser'
 
