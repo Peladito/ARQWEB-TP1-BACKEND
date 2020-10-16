@@ -21,8 +21,8 @@ const persistUser = ({userModel}) => async ({email, isAdmin=false}) => {
    await u.save()
    return u
 }
-const locationExists = ({locationModel}) => async ({email}) => {
-   let count = await locationModel.countDocuments({email})
+const locationExists = ({locationModel}) => async ({name}) => {
+   let count = await locationModel.countDocuments({name})
    return count > 0
 }
 const persistLocation = ({locationModel}) => async ({maxCapacity, name, description, latitude, longitude, address, owner, images}) => {

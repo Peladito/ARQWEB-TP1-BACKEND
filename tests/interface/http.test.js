@@ -37,6 +37,31 @@ describe("HTTP interface", () => {
         expect(res.status).toBe(200)
         expect(res.body.id).not.toBe(null)
     })
+    test("POST /location should allow to create more than one location", async () => {
+        await request.post('/user').send({email:'jhon@salchichon2.com'})
+        let location = {
+            "name": "test2",
+            "description": "a comon test",
+            "maxCapacity": 10,
+            "address": "fakestreet 1234",
+            "latitude": 23.022552,
+            "longitude": 56.3658
+        }
+        let res = await request.post('/location').auth('jhon@salchichon2.com','').send(location)
+        expect(res.status).toBe(200)
+        expect(res.body.id).not.toBe(null)
+        location = {
+            "name": "test3",
+            "description": "a comon test",
+            "maxCapacity": 10,
+            "address": "fakestreet 1234",
+            "latitude": 23.022552,
+            "longitude": 56.3658
+        }
+        res = await request.post('/location').auth('jhon@salchichon2.com','').send(location)
+        expect(res.status).toBe(200)
+        expect(res.body.id).not.toBe(null)
+    })
     test("POST /location should allow to send images from the location ", async () => {
         await request.post('/user').send({email:'jhon@salchichon2.com'})
 
