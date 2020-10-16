@@ -35,6 +35,7 @@ describe("HTTP interface", () => {
         }
         const res = await request.post('/location').auth('jhon@salchichon2.com','').send(location)
         expect(res.status).toBe(200)
+        expect(res.body.id).not.toBe(null)
     })
     test("POST /location should allow to send images from the location ", async () => {
         await request.post('/user').send({email:'jhon@salchichon2.com'})
