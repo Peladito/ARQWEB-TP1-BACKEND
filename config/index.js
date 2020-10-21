@@ -1,6 +1,7 @@
 require('dotenv').config()
 module.exports = {
     mongoose :{host:process.env['MONGO_URL'], port:process.env['MONGO_PORT'], dbname:process.env['MONGO_DB_NAME'], connstr:process.env['MONGO_CONNECTION_STRING']},
+    http:{port:process.env['PORT'] || process.env['HTTP_PORT']},
     mailing: {
         smtp:{
             host:process.env['SMTP_HOST'],
