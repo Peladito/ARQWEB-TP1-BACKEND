@@ -39,8 +39,14 @@ module.exports = (configuration) => {
     
     console.log(`Single db connection detected`)
     connectionString = buildConnectionString(configuration)+`/${configuration.dbname}`
+    if(configuration.connstr){
+        console.log("Using connection string")
+        mongoose.connect(configuration.connstr,{ useNewUrlParser: true, useUnifiedTopology: true });
+    }else{
+        mongoose.connect(`mongodb://${connectionString}`,{ useNewUrlParser: true, useUnifiedTopology: true });
+    }
     
-    mongoose.connect(`mongodb://${connectionString}`,{ useNewUrlParser: true, useUnifiedTopology: true });
+   // mongoose.connect(`mongodb://${connectionString}`,{ useNewUrlParser: true, useUnifiedTopology: true });
     
 }
 
