@@ -53,7 +53,7 @@ module.exports = (routes = [], responseMapper, errorMapper, port) => {
   routes.forEach(({path, verb, uoc})=>{
     expressApp[verb.toLowerCase()](path,[upload.array('images'), endpoint(uoc),responseHandler(responseMapper), errorHandler(errorMapper)])
   })
-
+  expressApp.get('/stat',(req,res)=>res.send('ok'))
   expressApp.listen(port)
   console.log(`express running on port ${port}`)
   return expressApp
