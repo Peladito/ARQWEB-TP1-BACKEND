@@ -292,6 +292,8 @@ components:
           type: "boolean"
         possiblyInfected:
           type: "boolean"
+        isAdmin:
+          type: "boolean"
           
     NewLocation:
       type: "object"

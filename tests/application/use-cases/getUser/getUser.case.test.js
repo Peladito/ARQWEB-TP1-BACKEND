@@ -10,7 +10,8 @@ describe("getUser uoc cases test", () => {
 			fetchUser: validTrue,
 			checkoutAllowed: validTrue,
 			isInfected: validTrue,
-			isPossiblyInfected: validTrue
+			isPossiblyInfected: validTrue,
+			isAdmin: validTrue,
 		}
 		let uoc = getUserUOC(dependencies)(actor)
 		await uoc({})
@@ -22,7 +23,8 @@ describe("getUser uoc cases test", () => {
 			fetchUser: errored,
 			checkoutAllowed: validTrue,
 			isInfected: validTrue,
-			isPossiblyInfected: validTrue
+			isPossiblyInfected: validTrue,
+			isAdmin: validTrue,
 		}
 		let uoc = getUserUOC(dependencies)(actor)
 		await expect(uoc({})).rejects.toThrow(GetUserError)
@@ -34,7 +36,8 @@ describe("getUser uoc cases test", () => {
 			fetchUser: validTrue,
 			checkoutAllowed: errored,
 			isInfected: validTrue,
-			isPossiblyInfected: validTrue
+			isPossiblyInfected: validTrue,
+			isAdmin: validTrue,
 		}
 		let uoc = getUserUOC(dependencies)(actor)
 		await expect(uoc({})).rejects.toThrow(GetUserError)
@@ -46,7 +49,8 @@ describe("getUser uoc cases test", () => {
 			fetchUser: validTrue,
 			checkoutAllowed: validTrue,
 			isInfected: errored,
-			isPossiblyInfected: validTrue
+			isPossiblyInfected: validTrue,
+			isAdmin: validTrue,
 		}
 		let uoc = getUserUOC(dependencies)(actor)
 		await expect(uoc({})).rejects.toThrow(GetUserError)
@@ -58,7 +62,8 @@ describe("getUser uoc cases test", () => {
 			fetchUser: validTrue,
 			checkoutAllowed: validTrue,
 			isInfected: validTrue,
-			isPossiblyInfected: errored
+			isPossiblyInfected: errored,
+			isAdmin: validTrue,
 		}
 		let uoc = getUserUOC(dependencies)(actor)
 		await expect(uoc({})).rejects.toThrow(GetUserError)
