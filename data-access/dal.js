@@ -144,7 +144,8 @@ const fetchAllLocations = ({locationModel, checksModel}) => async ({user}) => {
    let checks = await checksModel.find({checkout:{$exists:false},location:{$in:locations.map(l=>l._id)}})
    return locations.map(l=>{
       let loc = l.toObject()
-      return {...loc, occupation:checks.filter(c=>c.location.toString() === l.id).length}
+      let [longitude, latitude] = loc.position.coordinates
+      return {...loc, occupation:checks.filter(c=>c.location.toString() === l.id).length, latitude, longitude}
    })
 }
 const fetchOwnedLocations = (dependencies) => ({user}) => {
