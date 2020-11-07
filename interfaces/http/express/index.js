@@ -2,6 +2,7 @@ const express = require("express");
 const expressApp = express();
 const multer  = require('multer')
 const cors = require('cors')
+const fs = require('fs')
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, './storage')
@@ -17,7 +18,11 @@ expressApp.use(cors())
 expressApp.use(express.urlencoded({ extended: false }));
 expressApp.use('/images',express.static('./storage'));
 function extractParams(req){
-  return Object.assign({}, req.body, req.query, req.params);
+  let o =  Object.assign({}, req.body, req.query, req.params);
+  if (req.file){
+    o.images = ['/images/'+req.file.filename]
+  }
+  return o
 }
 
 function extractActor(req){
@@ -29,6 +34,9 @@ function extractActor(req){
 
 const errorHandler = (mapper) => async (error, req, res, next) => {
   let {status, data} = mapper.present(error)
+  if(req.file){
+    fs.unlinkSync(req.file.path)
+  }
   console.log(`Error in endpoint ${req.method} ${req.originalUrl} : ${status}`,data)
   res.status(status).json(data);
 }
@@ -51,7 +59,7 @@ const endpoint = (uoc) => async (req, res, next) => {
 
 module.exports = (routes = [], responseMapper, errorMapper, port) => {
   routes.forEach(({path, verb, uoc})=>{
-    expressApp[verb.toLowerCase()](path,[upload.array('images'), endpoint(uoc),responseHandler(responseMapper), errorHandler(errorMapper)])
+    expressApp[verb.toLowerCase()](path,[upload.single('images'), endpoint(uoc),responseHandler(responseMapper), errorHandler(errorMapper)])
   })
   expressApp.get('/stat',(req,res)=>res.send('ok'))
   expressApp.listen(port)

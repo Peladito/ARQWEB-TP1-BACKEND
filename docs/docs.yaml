@@ -5,7 +5,7 @@ info:
   title: "#YoEstuveAhi"
 
 servers:
-  - url: http://localhost:3000/
+  - url: http://localhost:5017/
     description: local development
 
 
@@ -330,6 +330,10 @@ components:
           type: "string"
         longitude:
           type: "string"
+        images:
+          type: "array"
+          items:
+            type: "string"
     LocationList:
               type: array
               items:
