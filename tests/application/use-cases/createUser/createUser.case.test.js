@@ -20,8 +20,8 @@ describe("createUser uoc cases test", () => {
 			userExists: validTrue,
 			persistUser: validTrue
 		}
-		let uoc = createUserUOC(dependencies)
-		await expect(uoc({})).rejects.toThrow(UserAlreadyExistsError)
+		let uoc = createUserUOC(dependencies)({})
+		await expect(uoc({email:''})).rejects.toThrow(UserAlreadyExistsError)
 		
 	});
 	test("Error when userExists throws", async () => {
@@ -30,7 +30,7 @@ describe("createUser uoc cases test", () => {
 			userExists: errored,
 			persistUser: validTrue
 		}
-		let uoc = createUserUOC(dependencies)
+		let uoc = createUserUOC(dependencies)({})
 		await expect(uoc({})).rejects.toThrow(CreateUserError)
 		
 	});
@@ -40,7 +40,7 @@ describe("createUser uoc cases test", () => {
 			userExists: validFalse,
 			persistUser: errored
 		}
-		let uoc = createUserUOC(dependencies)
+		let uoc = createUserUOC(dependencies)({})
 		await expect(uoc({})).rejects.toThrow(CreateUserError)
 		
 	});

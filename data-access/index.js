@@ -9,5 +9,8 @@ module.exports = (configuration)=>{
     const configurationModel = require('./model/configuration')
     const notificationService = require('./services/notification')(configuration)
     const dals = require('./dal')
-    return dals({userModel,locationModel,checksModel,diagnosticModel,configurationModel, notificationService})
+    const bcrypt = require('bcrypt');
+    const stringHasher = stringToEncrypt =>  bcrypt.hashSync(stringToEncrypt, 10);
+    const hashComparer = bcrypt.compareSync
+    return dals({userModel,locationModel,checksModel,diagnosticModel,configurationModel, notificationService, stringHasher, hashComparer})
 }

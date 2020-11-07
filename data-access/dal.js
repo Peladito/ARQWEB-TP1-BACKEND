@@ -16,8 +16,11 @@ const userExists = ({userModel}) => async ({email}) => {
    let count = await userModel.countDocuments({email})
    return count > 0
 }
-const persistUser = ({userModel}) => async ({email, isAdmin=false}) => {
-   let u = new userModel({email, isAdmin})
+const persistUser = ({userModel, stringHasher}) => async ({email, password, isAdmin=false}) => {
+   if(password){
+      password = stringHasher(password)
+   }
+   let u = new userModel({email, password, isAdmin})
    await u.save()
    return u
 }
@@ -31,8 +34,12 @@ const persistLocation = ({locationModel}) => async ({maxCapacity, name, descript
    await l.save()
    return l
 }
-const fetchUser = ({userModel}) => async ({email}) => {
-   return await userModel.findOne({email})
+const fetchUser = ({userModel, hashComparer}) => async ({email, password}) => {
+   let u = await userModel.findOne({email})
+   if(u.password){
+      u = hashComparer(password, u.password)?u:null
+   }
+   return u
    
 }
 const deleteAll = ({userModel, locationModel, checksModel, diagnosticModel, configurationModel}) => async () => {

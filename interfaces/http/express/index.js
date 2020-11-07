@@ -28,8 +28,13 @@ function extractParams(req){
 function extractActor(req){
   let auth = req.headers.authorization
   if(!auth || !auth.includes('Basic')) return null
-  let email = Buffer.from(auth.substr(6),'base64').toString('utf8').split(':')[0]
-  return {email}
+  let [email, password] = Buffer.from(auth.substr(6),'base64').toString('utf8').split(':')
+  if(password){
+    return {email, password}
+  }else{
+    return {email}
+  }
+
 }
 
 const errorHandler = (mapper) => async (error, req, res, next) => {

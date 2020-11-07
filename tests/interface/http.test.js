@@ -258,9 +258,9 @@ describe("HTTP interface", () => {
 
     })
     test("PUT /configurations should update configurations", async () => {
-        await dataAccess.persistUser({email:"admin@admin.com", isAdmin:true})
-        let res2 = await request.get('/configurations').auth('admin@admin.com','')
-        res2 = await request.put('/configurations').auth('admin@admin.com','').send({daysToBeCured:4, minutesForContagionByContact:4 })
+        await dataAccess.persistUser({email:"admin@admin.com", password:'pass', isAdmin:true})
+        let res2 = await request.get('/configurations').auth('admin@admin.com','pass')
+        res2 = await request.put('/configurations').auth('admin@admin.com','pass').send({daysToBeCured:4, minutesForContagionByContact:4 })
         const expecterdResponse = {
             daysToBeCured: 4,
             minutesForContagionByContact: 4,
