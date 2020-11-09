@@ -321,6 +321,8 @@ components:
       properties:
         id:
           type: 'string'
+        name:
+          type: 'string'
         description:
           type: "string"
         maxCapacity:
