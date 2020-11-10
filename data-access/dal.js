@@ -56,7 +56,7 @@ const fetchLocation = ({locationModel, checksModel}) => async (location) => {
       location._id = location.id
       delete location.id
    }
-   let checksCount = await checksModel.count({checkout:{$exists:false},location:location._id})
+   let checksCount = await checksModel.countDocuments({checkout:{$exists:false},location:location._id})
    let location = await locationModel.findOne(location).lean()
    location.occupation = checksCount
    return location
