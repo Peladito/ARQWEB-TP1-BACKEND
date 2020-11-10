@@ -51,12 +51,15 @@ const deleteAll = ({userModel, locationModel, checksModel, diagnosticModel, conf
    return true
 }
 
-const fetchLocation = ({locationModel}) => async (location) => {
+const fetchLocation = ({locationModel, checksModel}) => async (location) => {
    if(location.id){
       location._id = location.id
       delete location.id
    }
-   return await locationModel.findOne(location)
+   let checksCount = await checksModel.count({checkout:{$exists:false},location:location._id})
+   let location = await locationModel.findOne(location).lean()
+   location.occupation = checksCount
+   return location
 }
 const updateLocation = ({locationModel}) => async ({location, locationData}) => {
    delete locationData._id
