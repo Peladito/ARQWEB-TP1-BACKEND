@@ -36,7 +36,7 @@ const persistLocation = ({locationModel}) => async ({maxCapacity, name, descript
 }
 const fetchUser = ({userModel, hashComparer}) => async ({email, password}) => {
    let u = await userModel.findOne({email})
-   if(u.password){
+   if(u && u.password){
       u = hashComparer(password, u.password)?u:null
    }
    return u
