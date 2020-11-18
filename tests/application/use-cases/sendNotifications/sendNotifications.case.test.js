@@ -11,7 +11,7 @@ describe("sendNotifications uoc cases test", () => {
 			fetchUnsentNotifications: validTrue,
 			sendNotifications: validTrue
 		}
-		let uoc = sendNotificationsUOC(dependencies)(actor)
+		let uoc = sendNotificationsUOC(dependencies)
 		await uoc({})
 		
 	});
@@ -22,7 +22,7 @@ describe("sendNotifications uoc cases test", () => {
 			fetchUnsentNotifications: errored,
 			sendNotifications: shouldNotBeUsed
 		}
-		let uoc = sendNotificationsUOC(dependencies)(actor)
+		let uoc = sendNotificationsUOC(dependencies)
 		await expect(uoc({})).rejects.toThrow(SendNotificationsError)
 		expect(shouldNotBeUsed.isUsed()).toBe(false)
 		
@@ -33,7 +33,7 @@ describe("sendNotifications uoc cases test", () => {
 			fetchUnsentNotifications: validTrue,
 			sendNotifications: errored
 		}
-		let uoc = sendNotificationsUOC(dependencies)(actor)
+		let uoc = sendNotificationsUOC(dependencies)
 		await expect(uoc({})).rejects.toThrow(SendNotificationsError)
 		
 	});
